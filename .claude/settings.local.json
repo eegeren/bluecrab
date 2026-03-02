@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(go mod tidy)",
+      "Bash(go build ./...)",
+      "Bash(go vet ./...)",
+      "Bash(xargs wc -l)",
+      "Bash(npx create-next-app@latest web --typescript --tailwind --app --no-eslint --no-src-dir --import-alias \"@/*\")",
+      "Bash(powershell.exe -Command \"Get-ChildItem -Recurse -Path ''c:\\\\circlex\\\\web'' -Filter ''*.tsx'' | ForEach-Object { \\(Get-Content $_.FullName -Raw\\) -replace ''violet'', ''blue'' | Set-Content $_.FullName }\")"
+    ]
+  }
+}
