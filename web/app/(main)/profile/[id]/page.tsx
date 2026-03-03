@@ -243,162 +243,173 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
     { key: 'github', label: 'GitHub', url: profile.github_url },
   ].filter(x => x.url)
   const profileHandle = formatHandle(profile.username)
+  const coverStyles = profile.cover_url ? { backgroundImage: `url(${profile.cover_url})` } : undefined
 
   return (
     <>
       <div className="space-y-4">
-        <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-          <div className="relative">
-            <div
-              className="h-36 sm:h-44 md:h-52 relative"
-              style={profile.cover_url
-                ? { backgroundImage: `url(${profile.cover_url})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-                : undefined}
-            >
-              {!profile.cover_url && (
-                <div className="absolute inset-0 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-700" />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/55 via-slate-900/20 to-transparent" />
-              <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_18%_24%,rgba(255,255,255,0.35),transparent_45%),radial-gradient(circle_at_82%_16%,rgba(255,255,255,0.22),transparent_35%)]" />
-            </div>
+        <section className="relative overflow-hidden rounded-[28px] border border-white/30 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-[0_25px_60px_-35px_rgba(15,23,42,0.9)]">
+          <div className="absolute inset-0">
+            {profile.cover_url ? (
+              <div className="absolute inset-0 bg-cover bg-center opacity-70" style={coverStyles} />
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-br from-sky-400 via-blue-600 to-indigo-900 opacity-80" />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-white/70 to-white dark:from-slate-900/20 dark:via-slate-950/70 dark:to-slate-950" />
+            <div className="absolute inset-x-0 top-0 h-32 opacity-60 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.6),transparent_65%)] blur-3xl" />
           </div>
 
-          <div className="px-4 pb-5 md:px-6 md:pb-6 -mt-12 md:-mt-14 relative">
-            <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/70 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm p-4 md:p-6">
-              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                <div className="flex items-start gap-4 min-w-0">
-                  <div className="ring-4 ring-white dark:ring-slate-900 rounded-full shadow-sm shrink-0">
-                    <Avatar src={profile.avatar_url} username={profile.username} size={96} />
-                  </div>
-                  <div className="min-w-0 pt-1">
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 truncate">{profile.username}</h1>
-                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400">@{profileHandle}</p>
-                    {profile.bio ? (
-                      <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300 max-w-2xl">{profile.bio}</p>
-                    ) : (
-                      <p className="mt-2 text-sm text-slate-400 dark:text-slate-500">No bio yet.</p>
-                    )}
-                    {(profile.phone_number || socialLinks.length > 0) && (
-                      <div className="mt-3 flex flex-wrap items-center gap-2">
-                        {profile.phone_number && (
-                          <MetaPill href={`tel:${profile.phone_number}`} label={profile.phone_number} kind="phone" />
-                        )}
-                        {socialLinks.map(s => (
-                          <MetaPill key={s.key} href={s.url} label={s.label} kind="link" />
-                        ))}
-                      </div>
-                    )}
+          <div className="relative p-5 sm:p-6 lg:p-8 space-y-6">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+              <div className="flex items-start gap-4 min-w-0">
+                <div className="relative shrink-0">
+                  <div className="absolute inset-0 blur-2xl bg-blue-500/50 dark:bg-blue-700/50" />
+                  <div className="relative rounded-[32px] bg-white/90 dark:bg-slate-900/80 p-1 ring-1 ring-white/70 dark:ring-slate-800 shadow-2xl">
+                    <Avatar src={profile.avatar_url} username={profile.username} size={110} />
                   </div>
                 </div>
-
-                <div className="flex flex-wrap items-center gap-2 md:justify-end">
-                  {isOwn ? (
-                    <button
-                      aria-label="Edit profile"
-                      onClick={openEdit}
-                      className="px-3 sm:px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all"
-                    >
-                      Edit Profile
-                    </button>
-                  ) : currentUser && (
-                    <>
-                      <button
-                        aria-label="Friend action"
-                        onClick={handleFriendAction}
-                        disabled={friendship === 'friends' || friendship === 'pending_outgoing'}
-                        className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-all ${
-                          friendship === 'friends'
-                            ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
-                            : friendship === 'pending_outgoing'
-                              ? 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                              : 'bg-blue-600 hover:bg-blue-700 text-white'
-                        }`}
-                      >
-                        {friendship === 'friends'
-                          ? 'Friends'
-                          : friendship === 'pending_outgoing'
-                            ? 'Sent'
-                            : friendship === 'pending_incoming'
-                              ? 'Accept'
-                              : 'Add'}
-                      </button>
-                      <FollowButton
-                        userId={profile.id}
-                        isFollowing={profile.is_following}
-                        onToggle={f =>
-                          setProfile(p => (p ? { ...p, is_following: f, follower_count: p.follower_count + (f ? 1 : -1) } : p))
-                        }
-                      />
-                      <Link
-                        href={`/messages/${profile.id}`}
-                        className="px-3 sm:px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 flex items-center gap-1 transition-all"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                        </svg>
-                        <span className="hidden sm:inline">Message</span>
-                      </Link>
-                    </>
+                <div className="min-w-0 text-slate-900 dark:text-slate-100">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="inline-flex items-center gap-1 rounded-full border border-blue-100 bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-600 dark:border-blue-500/40 dark:bg-blue-500/10 dark:text-blue-200">
+                      Verified
+                    </span>
+                    <p className="text-[13px] uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">Member Since {new Date(profile.created_at ?? Date.now()).getFullYear()}</p>
+                  </div>
+                  <h1 className="mt-1 text-3xl font-black tracking-tight text-slate-900 dark:text-white truncate">
+                    {profile.username}
+                  </h1>
+                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400">@{profileHandle}</p>
+                  {profile.bio ? (
+                    <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300 max-w-2xl">
+                      {profile.bio}
+                    </p>
+                  ) : (
+                    <p className="mt-3 text-sm text-slate-400 dark:text-slate-500">Henüz bir bio eklenmemiş.</p>
+                  )}
+                  {(profile.phone_number || socialLinks.length > 0) && (
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      {profile.phone_number && (
+                        <MetaPill href={`tel:${profile.phone_number}`} label={profile.phone_number} kind="phone" />
+                      )}
+                      {socialLinks.map(s => (
+                        <MetaPill key={s.key} href={s.url} label={s.label} kind="link" />
+                      ))}
+                    </div>
                   )}
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-5">
-                <button
-                  aria-label="View posts tab"
-                  onClick={() => loadTab('grid')}
-                  className={`rounded-xl border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                    tab === 'grid' || tab === 'list'
-                      ? 'border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-950/40'
-                      : 'border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-950/50 hover:bg-slate-100 dark:hover:bg-slate-800/60'
-                  } col-span-2 sm:col-span-1`}
-                >
-                  <p className="text-lg md:text-xl font-bold text-slate-900 dark:text-slate-100">{posts.length}</p>
-                  <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Posts</p>
-                </button>
-                <button
-                  aria-label="View followers tab"
-                  onClick={() => loadTab('followers')}
-                  className={`rounded-xl border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                    tab === 'followers'
-                      ? 'border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-950/40'
-                      : 'border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-950/50 hover:bg-slate-100 dark:hover:bg-slate-800/60'
-                  }`}
-                >
-                  <p className="text-lg md:text-xl font-bold text-slate-900 dark:text-slate-100">{profile.follower_count}</p>
-                  <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Followers</p>
-                </button>
-                <button
-                  aria-label="View following tab"
-                  onClick={() => loadTab('following')}
-                  className={`rounded-xl border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                    tab === 'following'
-                      ? 'border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-950/40'
-                      : 'border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-950/50 hover:bg-slate-100 dark:hover:bg-slate-800/60'
-                  }`}
-                >
-                  <p className="text-lg md:text-xl font-bold text-slate-900 dark:text-slate-100">{profile.following_count}</p>
-                  <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Following</p>
-                </button>
+              <div className="flex flex-wrap items-center gap-2 md:justify-end">
+                {isOwn ? (
+                  <button
+                    aria-label="Edit profile"
+                    onClick={openEdit}
+                    className="inline-flex items-center gap-2 rounded-2xl border border-slate-200/60 bg-white/60 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm backdrop-blur hover:bg-white hover:border-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-100"
+                  >
+                    <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M3 14.25V17h2.75L14.81 7.94l-2.75-2.75L3 14.25Zm12.71-7.04a.996.996 0 0 0 0-1.41l-1.5-1.5a.996.996 0 1 0-1.41 1.41l1.5 1.5c.39.39 1.02.39 1.41 0Z" />
+                    </svg>
+                    Profili düzenle
+                  </button>
+                ) : currentUser && (
+                  <>
+                    <button
+                      aria-label="Friend action"
+                      onClick={handleFriendAction}
+                      disabled={friendship === 'friends' || friendship === 'pending_outgoing'}
+                      className={`inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${
+                        friendship === 'friends'
+                          ? 'bg-emerald-500/90 hover:bg-emerald-500 disabled:opacity-80'
+                          : friendship === 'pending_outgoing'
+                            ? 'bg-slate-500/80 hover:bg-slate-500'
+                            : 'bg-blue-600 hover:bg-blue-500'
+                      }`}
+                    >
+                      {friendship === 'friends'
+                        ? 'Arkadaşsınız'
+                        : friendship === 'pending_outgoing'
+                          ? 'İstek gönderildi'
+                          : friendship === 'pending_incoming'
+                            ? 'Kabul et'
+                            : 'Arkadaş ekle'}
+                    </button>
+                    <FollowButton
+                      userId={profile.id}
+                      isFollowing={profile.is_following}
+                      onToggle={f =>
+                        setProfile(p => (p ? { ...p, is_following: f, follower_count: p.follower_count + (f ? 1 : -1) } : p))
+                      }
+                    />
+                    <Link
+                      href={`/messages/${profile.id}`}
+                      className="inline-flex items-center gap-2 rounded-2xl border border-white/60 bg-white/50 px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm backdrop-blur transition hover:border-white hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-200"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                      </svg>
+                      Mesaj gönder
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
-          </div>
 
-          <div className="grid grid-cols-2 border-t border-slate-200 dark:border-slate-800">
-            <button
-              aria-label="Grid view"
-              onClick={() => loadTab('grid')}
-              className={`py-3 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${tab === 'grid' ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600' : 'text-slate-500 dark:text-slate-400'}`}
-            >
-              Grid
-            </button>
-            <button
-              aria-label="List view"
-              onClick={() => loadTab('list')}
-              className={`py-3 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${tab === 'list' ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600' : 'text-slate-500 dark:text-slate-400'}`}
-            >
-              List
-            </button>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <button
+                aria-label="View posts tab"
+                onClick={() => loadTab('grid')}
+                className={`group rounded-2xl border border-white/70 px-5 py-4 text-left backdrop-blur transition hover:-translate-y-0.5 ${
+                  tab === 'grid' || tab === 'list'
+                    ? 'bg-white/70 shadow-lg dark:bg-slate-900/70'
+                    : 'bg-white/30 dark:bg-slate-900/30'
+                }`}
+              >
+                <p className="text-3xl font-black text-slate-900 dark:text-white">{posts.length}</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">Gönderi</p>
+              </button>
+              <button
+                aria-label="View followers tab"
+                onClick={() => loadTab('followers')}
+                className={`group rounded-2xl border border-white/70 px-5 py-4 text-left backdrop-blur transition hover:-translate-y-0.5 ${
+                  tab === 'followers'
+                    ? 'bg-white/70 shadow-lg dark:bg-slate-900/70'
+                    : 'bg-white/30 dark:bg-slate-900/30'
+                }`}
+              >
+                <p className="text-3xl font-black text-slate-900 dark:text-white">{profile.follower_count}</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">Takipçi</p>
+              </button>
+              <button
+                aria-label="View following tab"
+                onClick={() => loadTab('following')}
+                className={`group rounded-2xl border border-white/70 px-5 py-4 text-left backdrop-blur transition hover:-translate-y-0.5 ${
+                  tab === 'following'
+                    ? 'bg-white/70 shadow-lg dark:bg-slate-900/70'
+                    : 'bg-white/30 dark:bg-slate-900/30'
+                }`}
+              >
+                <p className="text-3xl font-black text-slate-900 dark:text-white">{profile.following_count}</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">Takip edilen</p>
+              </button>
+            </div>
+
+            <div className="rounded-2xl border border-white/60 bg-white/70 p-1 shadow-inner dark:border-slate-800 dark:bg-slate-900/60">
+              <div className="flex flex-wrap gap-2">
+                {(['grid', 'list'] as TabType[]).map(key => (
+                  <button
+                    key={key}
+                    onClick={() => loadTab(key)}
+                    className={`flex-1 rounded-2xl px-4 py-2 text-sm font-semibold capitalize transition ${
+                      tab === key
+                        ? 'bg-slate-900 text-white shadow dark:bg-white dark:text-slate-900'
+                        : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+                    }`}
+                  >
+                    {key === 'grid' ? 'Galeri' : 'Akış'}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
