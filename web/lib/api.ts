@@ -18,25 +18,9 @@ import type {
   UserProfile,
 } from '@/types'
 
-// Get API base URL from environment variables
-// In Next.js, NEXT_PUBLIC_ variables are injected at build time
-declare const process: { env: Record<string, string | undefined> } | undefined
 
-function resolveApiBase(): string {
-  let apiUrl = 'http://localhost:8080/api'
-  
-  // Try to get from process.env (works in Node.js/SSR)
-  if (typeof process !== 'undefined' && process?.env?.NEXT_PUBLIC_API_BASE_URL) {
-    apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL
-  }
-  
-  const raw = apiUrl.trim()
-  const value = raw && raw.length > 0 ? raw : 'http://localhost:8080/api'
-  console.log('[API] Base URL:', value)
-  return value.replace(/\/+$/, '')
-}
-
-const BASE = resolveApiBase()
+declare const process: { env: { NEXT_PUBLIC_API_BASE_URL?: string } }
+const BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080/api').replace(/\/+$/, '')
 
 async function request<T>(
   path: string,
