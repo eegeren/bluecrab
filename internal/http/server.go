@@ -43,6 +43,10 @@ func NewServer(cfg config.Config, pool *pgxpool.Pool) *fiber.App {
 		AllowMethods: "GET, POST, PUT, DELETE, OPTIONS",
 	}))
 
+	app.Get("/healthz", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{"status": "ok"})
+	})
+
 	api := app.Group("/api")
 
 	auth.RegisterRoutes(api, pool, cfg.JWTSecret)
