@@ -22,6 +22,7 @@ function resolveApiBase(): string {
   const raw = process.env.NEXT_PUBLIC_API_BASE_URL?.trim()
   const fallback = 'http://localhost:8080/api'
   const value = raw && raw.length > 0 ? raw : fallback
+  console.log('[API] Base URL:', value)
   return value.replace(/\/+$/, '')
 }
 
@@ -31,20 +32,31 @@ async function request<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...getAuthHeader(),
-      ...(options.headers as Record<string, string> | undefined),
-    },
-  })
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({ error: 'Something went wrong' }))
-    throw new Error(body.error || 'Something went wrong')
+  const url = `${BASE}${path}`
+  console.log('[API] Request:', options.method || 'GET', url)
+  try {
+    const res = await fetch(url, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeader(),
+        ...(options.headers as Record<string, string> | undefined),
+      },
+    })
+    console.log('[API] Response:', res.status, res.statusText)
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({ error: 'Something went wrong' }))
+      console.error('[API] Error response:', body)
+      throw new Error(body.error || `HTTP ${res.status}: ${res.statusText}`)
+    }
+    if (res.status === 204) return undefined as T
+    const data = await res.json()
+    console.log('[API] Data received:', path)
+    return data
+  } catch (error) {
+    console.error('[API] Request failed:', error)
+    throw error
   }
-  if (res.status === 204) return undefined as T
-  return res.json()
 }
 
 // Auth
