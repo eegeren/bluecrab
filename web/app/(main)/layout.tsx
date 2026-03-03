@@ -13,9 +13,8 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="min-h-screen bg-[#f0f6ff] dark:bg-[#030d1a]">
       <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
-      <main className="md:ml-64 xl:mr-72 min-h-screen pb-20 md:pb-0">
-        <div className="hidden md:block" />
-        <div className="md:hidden sticky top-0 z-10 bg-white dark:bg-[#0a1628] border-b border-blue-100 dark:border-[#162033]">
+      <main className="xl:mr-72 min-h-screen pb-20 md:pb-6">
+        <div className="sticky top-0 z-20 bg-white dark:bg-[#0a1628] border-b border-blue-100 dark:border-[#162033]">
           <div className="flex items-center justify-between px-3 py-3 gap-2">
             <button
               onClick={toggleSidebar}

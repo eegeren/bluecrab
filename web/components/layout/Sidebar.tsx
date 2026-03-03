@@ -117,6 +117,15 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
     }
   }, [isOpen])
 
+  useEffect(() => {
+    if (!isOpen) return
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose?.()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [isOpen, onClose])
+
   const logout = () => {
     removeToken()
     onClose?.()
@@ -128,13 +137,13 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-20 bg-black/40 md:hidden"
+          className="fixed inset-0 z-40 bg-black/40"
           onClick={onClose}
         />
       )}
       
-      <aside className={`fixed left-0 top-0 h-full w-[76vw] max-w-72 md:w-64 bg-white dark:bg-[#0a1628] border-r border-blue-100 dark:border-[#162033] flex flex-col py-6 px-4 z-50 md:z-30 transition-transform duration-300 overflow-y-auto ${
-        isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+      <aside className={`fixed left-0 top-0 h-full w-[78vw] max-w-80 bg-white dark:bg-[#0a1628] border-r border-blue-100 dark:border-[#162033] flex flex-col py-6 px-4 z-50 transition-transform duration-300 overflow-y-auto ${
+        isOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
       <div className="mb-8 flex items-start justify-between gap-2">
         {/* Logo */}
@@ -155,7 +164,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
         <button
           type="button"
           onClick={onClose}
-          className="md:hidden mt-1 p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+          className="mt-1 p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
           aria-label="Close menu"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
