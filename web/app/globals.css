@@ -130,7 +130,7 @@ body {
 /* Safe area adjustments for mobile notch/edge-to-edge displays */
 @supports (padding: max(0px)) {
   body {
-    padding-left: max(env(safe-area-inset-left), 1rem);
-    padding-right: max(env(safe-area-inset-right), 1rem);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
 }

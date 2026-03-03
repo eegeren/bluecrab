@@ -12,7 +12,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <div className="min-h-screen bg-[#f0f6ff] dark:bg-[#030d1a]">
-      <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} onClose={closeSidebar} />
+      <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
       <main className="md:ml-64 xl:mr-72 min-h-screen pb-20 md:pb-0">
         <div className="hidden md:block" />
         <div className="md:hidden sticky top-0 z-10 bg-white dark:bg-[#0a1628] border-b border-blue-100 dark:border-[#162033]">
@@ -35,7 +35,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         </div>
       </main>
       <RightPanel />
-      <BottomNav />
+      <BottomNav hidden={sidebarOpen} />
       <NotificationPoller />
     </div>
   )

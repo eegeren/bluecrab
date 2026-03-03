@@ -20,7 +20,7 @@ const navItems = [
     ),
   },
   {
-    href: '/ search',
+    href: '/search',
     label: 'Explore',
     icon: (active: boolean) => (
       <svg className="w-6 h-6" fill={active ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
@@ -88,11 +88,10 @@ const navItems = [
 
 interface SidebarProps {
   isOpen?: boolean
-  onToggle?: () => void
   onClose?: () => void
 }
 
-export default function Sidebar({ isOpen = false, onToggle, onClose }: SidebarProps) {
+export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [user, setUser] = useState<UserProfile | null>(null)
@@ -111,8 +110,16 @@ export default function Sidebar({ isOpen = false, onToggle, onClose }: SidebarPr
     if (isOpen) onClose?.()
   }, [pathname]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? 'hidden' : ''
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isOpen])
+
   const logout = () => {
     removeToken()
+    onClose?.()
     router.push('/login')
   }
 
@@ -126,7 +133,7 @@ export default function Sidebar({ isOpen = false, onToggle, onClose }: SidebarPr
         />
       )}
       
-      <aside className={`fixed md:fixed left-0 top-0 h-full w-64 bg-white dark:bg-[#0a1628] border-r border-blue-100 dark:border-[#162033] flex flex-col py-6 px-4 z-30 md:z-30 transition-transform duration-300 ${
+      <aside className={`fixed left-0 top-0 h-full w-[82vw] max-w-72 md:w-64 bg-white dark:bg-[#0a1628] border-r border-blue-100 dark:border-[#162033] flex flex-col py-6 px-4 z-50 md:z-30 transition-transform duration-300 overflow-y-auto ${
         isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
       }`}>
       {/* Logo */}
@@ -153,6 +160,7 @@ export default function Sidebar({ isOpen = false, onToggle, onClose }: SidebarPr
             <Link
               key={item.href}
               href={item.href}
+              onClick={onClose}
               className={`flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-all relative ${
                 active
                   ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400'
@@ -178,6 +186,7 @@ export default function Sidebar({ isOpen = false, onToggle, onClose }: SidebarPr
         {user && (
           <Link
             href={`/profile/${user.id}`}
+            onClick={onClose}
             className={`flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-all ${
               pathname.startsWith('/profile')
                 ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400'
@@ -215,7 +224,7 @@ export default function Sidebar({ isOpen = false, onToggle, onClose }: SidebarPr
             </button>
           </div>
         ) : (
-          <Link href="/login" className="block px-3 py-2 text-sm font-semibold text-blue-500 dark:text-blue-400 hover:underline">
+          <Link href="/login" onClick={onClose} className="block px-3 py-2 text-sm font-semibold text-blue-500 dark:text-blue-400 hover:underline">
             Sign in
           </Link>
         )}
@@ -224,5 +233,4 @@ export default function Sidebar({ isOpen = false, onToggle, onClose }: SidebarPr
     </>
   )
 }
-
 

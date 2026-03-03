@@ -37,10 +37,16 @@ const items = [
   },
 ]
 
-export default function BottomNav() {
+interface BottomNavProps {
+  hidden?: boolean
+}
+
+export default function BottomNav({ hidden = false }: BottomNavProps) {
   const pathname = usePathname()
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-[#0a1628]/90 glass border-t border-blue-100 dark:border-[#162033]">
+    <nav className={`md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-[#0a1628]/90 glass border-t border-blue-100 dark:border-[#162033] transition-opacity ${
+      hidden ? 'opacity-0 pointer-events-none' : 'opacity-100'
+    }`}>
       <div className="flex">
         {items.map(item => {
           const active = pathname === item.href
