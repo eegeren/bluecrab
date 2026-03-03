@@ -14,7 +14,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="min-h-screen bg-[#f0f6ff] dark:bg-[#030d1a]">
       <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
-      <main className="lg:pl-72 xl:mr-72 min-h-screen pb-20 md:pb-6">
+      <main className="lg:pl-72 xl:pr-72 min-h-screen pb-20 md:pb-6">
         <div className="sticky top-0 z-[70] bg-white dark:bg-[#0a1628] border-b border-blue-100 dark:border-[#162033]">
           <div className="flex items-center justify-between px-3 py-3 gap-2">
             <div className="flex items-center gap-2 min-w-0">
