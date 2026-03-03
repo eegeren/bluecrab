@@ -89,9 +89,12 @@ const navItems = [
 interface SidebarProps {
   isOpen?: boolean
   onClose?: () => void
+  width?: string // e.g. '300px' or '50vw'
+  durationMs?: number
+  overlay?: boolean
 }
 
-export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
+export default function Sidebar({ isOpen = false, onClose, width = '72vw', durationMs = 300, overlay = false }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [user, setUser] = useState<UserProfile | null>(null)
@@ -111,7 +114,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   }, [pathname]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    // Remove forcing body overflow hidden so the sidebar can push content instead of blocking scroll
+    // Do not force body overflow; let overlay/parent decide. noop.
     return () => {}
   }, [isOpen])
 
@@ -132,10 +135,20 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile overlay removed to allow push behavior */}
+      {/* Optional overlay */}
+      {isOpen && overlay && (
+        <div
+          className="fixed inset-0 z-[85] bg-black/40 cursor-pointer lg:hidden"
+          onClick={onClose}
+        />
+      )}
 
-      <aside className={`fixed left-0 top-0 h-full w-[72vw] max-w-[300px] bg-white dark:bg-[#0a1628] border-r border-blue-100 dark:border-[#162033] flex flex-col py-6 px-4 z-[90] transition-transform duration-300 overflow-y-auto lg:w-72 lg:max-w-72 lg:translate-x-0 ${
-        isOpen ? 'translate-x-0' : '-translate-x-full'
+      {/** compute width and duration classes dynamically **/}
+      <aside className={`fixed left-0 top-0 h-full bg-white dark:bg-[#0a1628] border-r border-blue-100 dark:border-[#162033] flex flex-col py-6 px-4 z-[90] transition-transform overflow-y-auto lg:translate-x-0 ${
+        // width handling: allow arbitrary width values like '300px' or '50vw'
+        (width ? `w-[${width}] max-w-[300px] lg:w-72 lg:max-w-72` : 'w-[72vw] max-w-[300px] lg:w-72 lg:max-w-72') + ' ' +
+        ` ${`duration-[${durationMs}ms]`} ` +
+        (isOpen ? 'translate-x-0' : '-translate-x-full')
       }`}>
       <div className="mb-8 flex items-start justify-between gap-2">
         {/* Logo */}
