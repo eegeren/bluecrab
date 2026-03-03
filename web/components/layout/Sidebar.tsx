@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, type CSSProperties } from 'react'
 import { auth, notifications as notifApi, messages as msgApi } from '@/lib/api'
 import { removeToken, isLoggedIn } from '@/lib/auth'
 import Avatar from '@/components/user/Avatar'
@@ -89,13 +89,12 @@ const navItems = [
 interface SidebarProps {
   isOpen?: boolean
   onClose?: () => void
-  onToggle?: () => void
   width?: string // e.g. '300px' or '50vw'
   durationMs?: number
   overlay?: boolean
 }
 
-export default function Sidebar({ isOpen = false, onClose, onToggle, width = '72vw', durationMs = 300, overlay = false }: SidebarProps) {
+export default function Sidebar({ isOpen = false, onClose, width = '72vw', durationMs = 300, overlay = false }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [user, setUser] = useState<UserProfile | null>(null)
@@ -103,9 +102,15 @@ export default function Sidebar({ isOpen = false, onClose, onToggle, width = '72
   const [unreadMsg, setUnreadMsg] = useState(0)
   const [logoSrc, setLogoSrc] = useState('/bluecrablogo.png?v=20260302')
 
-  // Uncontrolled fallback: if parent doesn't pass isOpen/onToggle, we manage open state here
-  const [internalOpen, setInternalOpen] = useState(false)
-  const open = typeof isOpen === 'boolean' ? isOpen : internalOpen
+  const open = Boolean(isOpen)
+  const sidebarStyles: CSSProperties & { '--sidebar-width'?: string } = {
+    '--sidebar-width': width ?? '72vw',
+    transitionDuration: `${durationMs}ms`,
+  }
+
+  const closeMenu = useCallback(() => {
+    onClose?.()
+  }, [onClose])
 
   useEffect(() => {
     if (!isLoggedIn()) return
@@ -116,12 +121,7 @@ export default function Sidebar({ isOpen = false, onClose, onToggle, width = '72
 
   useEffect(() => {
     if (open) closeMenu()
-  }, [pathname]) 
-
-  useEffect(() => {
-
-    return () => {}
-  }, [open])
+  }, [pathname, open, closeMenu])
 
   useEffect(() => {
     if (!open) return
@@ -130,18 +130,7 @@ export default function Sidebar({ isOpen = false, onClose, onToggle, width = '72
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [open, onClose])
-
-  const closeMenu = () => {
-    onClose?.()
-    setInternalOpen(false)
-  }
-
-  const toggle = () => {
-    if (onToggle) return onToggle()
-    // uncontrolled fallback
-    setInternalOpen(v => !v)
-  }
+  }, [open, closeMenu])
 
   const logout = () => {
     removeToken()
@@ -151,25 +140,6 @@ export default function Sidebar({ isOpen = false, onClose, onToggle, width = '72
 
   return (
     <>
-      {/* Floating toggle button (bottom-left) */}
-      <button
-        type="button"
-        onClick={toggle}
-        aria-label={open ? 'Close menu' : 'Open menu'}
-        aria-expanded={open}
-        className="fixed bottom-4 left-4 z-[95] inline-flex items-center justify-center rounded-full bg-blue-600 text-white shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-shadow w-12 h-12"
-      >
-        {open ? (
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        ) : (
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        )}
-      </button>
-
       {/* Optional overlay */}
       {open && overlay && (
         <div
@@ -178,12 +148,14 @@ export default function Sidebar({ isOpen = false, onClose, onToggle, width = '72
         />
       )}
 
-      {/** compute width and duration classes dynamically **/}
-      <aside className={`fixed left-0 top-0 h-full bg-white dark:bg-[#0a1628] border-r border-blue-100 dark:border-[#162033] flex flex-col py-6 px-4 z-[90] transition-transform overflow-y-auto ${
-        (width ? `w-[${width}] max-w-[300px] lg:w-72 lg:max-w-72` : 'w-[72vw] max-w-[300px] lg:w-72 lg:max-w-72') + ' ' +
-        `duration-[${durationMs}ms] ` +
-        (open ? 'translate-x-0 lg:translate-x-0' : '-translate-x-full lg:-translate-x-full')
-      }`}>
+      <aside
+        role="navigation"
+        aria-label="Primary"
+        style={sidebarStyles}
+        className={`fixed inset-y-0 left-0 z-[90] flex h-full flex-col border-r border-blue-100 bg-white py-6 px-4 transition-transform dark:border-[#162033] dark:bg-[#0a1628] w-[var(--sidebar-width)] max-w-[300px] overflow-y-auto ${
+          open ? 'translate-x-0' : '-translate-x-full'
+        } lg:translate-x-0 lg:w-72 lg:max-w-72`}
+      >
       <div className="mb-8 flex items-start justify-between gap-2">
         {/* Logo */}
         <Link href="/" onClick={closeMenu} className="flex items-center gap-3 px-2 group min-w-0 flex-1">

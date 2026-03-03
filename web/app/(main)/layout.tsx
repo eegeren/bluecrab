@@ -15,8 +15,10 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <div className="min-h-screen bg-[#f0f6ff] dark:bg-[#030d1a]">
-      {loggedIn && <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} width="300px" durationMs={100} overlay={true} />}
-      <main className={`${loggedIn ? (sidebarOpen ? 'lg:pl-72' : '') : ''} min-h-screen pb-20 md:pb-6 transition-transform duration-[100ms] ${sidebarOpen ? 'translate-x-[300px] lg:translate-x-0' : ''}`}>
+      {loggedIn && (
+        <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} width="300px" durationMs={100} overlay={true} />
+      )}
+      <main className={`${loggedIn ? 'lg:pl-72' : ''} min-h-screen pb-20 md:pb-6 transition-transform duration-150`}>
         <div className="sticky top-0 z-[70] bg-white dark:bg-[#0a1628] border-b border-blue-100 dark:border-[#162033]">
           <div className="flex items-center justify-between px-3 py-3 gap-2">
             <div className="flex items-center gap-2 min-w-0">
@@ -53,7 +55,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         <button
           type="button"
           onClick={toggleSidebar}
-          className="fixed left-3 top-1/2 transform -translate-y-1/2 z-[80] rounded-md bg-blue-600 hover:bg-blue-700 text-white shadow-md p-2"
+          className="fixed left-3 top-1/2 transform -translate-y-1/2 z-[80] rounded-md bg-blue-600 hover:bg-blue-700 text-white shadow-md p-2 lg:hidden"
           aria-label="Open menu"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
