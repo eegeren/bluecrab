@@ -16,6 +16,8 @@ func (h *Handler) register(c *fiber.Ctx) error {
 	if err := c.BodyParser(&in); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid body"})
 	}
+	in.IPAddress = c.IP()
+	in.UserAgent = c.Get("User-Agent")
 	resp, err := h.svc.Register(c.Context(), in)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -28,6 +30,8 @@ func (h *Handler) login(c *fiber.Ctx) error {
 	if err := c.BodyParser(&in); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid body"})
 	}
+	in.IPAddress = c.IP()
+	in.UserAgent = c.Get("User-Agent")
 	resp, err := h.svc.Login(c.Context(), in)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": err.Error()})

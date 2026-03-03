@@ -106,6 +106,16 @@ func (s *Service) GetMessages(ctx context.Context, userID, otherID string, limit
 	return list, rows.Err()
 }
 
+// UnreadCount returns total unread message count for a user.
+func (s *Service) UnreadCount(ctx context.Context, userID string) (int64, error) {
+	var count int64
+	err := s.pool.QueryRow(ctx,
+		`SELECT COUNT(*) FROM messages WHERE receiver_id = $1::uuid AND is_read = false`,
+		userID,
+	).Scan(&count)
+	return count, err
+}
+
 // Send creates a new direct message.
 func (s *Service) Send(ctx context.Context, senderID, receiverID string, in SendMessageInput) (*models.Message, error) {
 	if in.Content == "" {

@@ -46,11 +46,20 @@ func (h *Handler) send(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(msg)
 }
 
+func (h *Handler) unreadCount(c *fiber.Ctx) error {
+	count, err := h.svc.UnreadCount(c.Context(), middleware.UserID(c))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(fiber.Map{"count": count})
+}
+
 func RegisterRoutes(api fiber.Router, pool *pgxpool.Pool, secret string) {
 	svc := NewService(pool)
 	h := NewHandler(svc)
 	g := api.Group("/messages", middleware.RequireAuth(secret))
 	g.Get("/", h.conversations)
+	g.Get("/unread-count", h.unreadCount)
 	g.Get("/:userId", h.history)
 	g.Post("/:userId", h.send)
 }

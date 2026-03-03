@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: circlex-api
+    runtime: go
+    plan: starter
+    autoDeploy: true
+    buildCommand: go build -o bin/api ./cmd/api
+    startCommand: ./bin/api
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: AUTO_MIGRATE
+        value: "true"
+      - key: MIGRATIONS_DIR
+        value: migrations
