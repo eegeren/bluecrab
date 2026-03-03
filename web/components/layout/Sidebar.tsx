@@ -89,9 +89,10 @@ const navItems = [
 interface SidebarProps {
   isOpen?: boolean
   onToggle?: () => void
+  onClose?: () => void
 }
 
-export default function Sidebar({ isOpen = false, onToggle }: SidebarProps) {
+export default function Sidebar({ isOpen = false, onToggle, onClose }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [user, setUser] = useState<UserProfile | null>(null)
@@ -107,8 +108,8 @@ export default function Sidebar({ isOpen = false, onToggle }: SidebarProps) {
   }, [])
 
   useEffect(() => {
-    if (isOpen && onToggle) onToggle()
-  }, [pathname, onToggle])
+    if (isOpen) onClose?.()
+  }, [pathname]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const logout = () => {
     removeToken()
@@ -121,7 +122,7 @@ export default function Sidebar({ isOpen = false, onToggle }: SidebarProps) {
       {isOpen && (
         <div
           className="fixed inset-0 z-20 bg-black/40 md:hidden"
-          onClick={onToggle}
+          onClick={onClose}
         />
       )}
       
