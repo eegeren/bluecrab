@@ -354,43 +354,22 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <button
-                aria-label="View posts tab"
-                onClick={() => loadTab('grid')}
-                className={`group rounded-2xl border border-white/70 px-5 py-4 text-left backdrop-blur transition hover:-translate-y-0.5 ${
-                  tab === 'grid' || tab === 'list'
-                    ? 'bg-white/70 shadow-lg dark:bg-slate-900/70'
-                    : 'bg-white/30 dark:bg-slate-900/30'
-                }`}
-              >
-                <p className="text-3xl font-black text-slate-900 dark:text-white">{posts.length}</p>
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">Gönderi</p>
-              </button>
-              <button
-                aria-label="View followers tab"
-                onClick={() => loadTab('followers')}
-                className={`group rounded-2xl border border-white/70 px-5 py-4 text-left backdrop-blur transition hover:-translate-y-0.5 ${
-                  tab === 'followers'
-                    ? 'bg-white/70 shadow-lg dark:bg-slate-900/70'
-                    : 'bg-white/30 dark:bg-slate-900/30'
-                }`}
-              >
-                <p className="text-3xl font-black text-slate-900 dark:text-white">{profile.follower_count}</p>
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">Takipçi</p>
-              </button>
-              <button
-                aria-label="View following tab"
-                onClick={() => loadTab('following')}
-                className={`group rounded-2xl border border-white/70 px-5 py-4 text-left backdrop-blur transition hover:-translate-y-0.5 ${
-                  tab === 'following'
-                    ? 'bg-white/70 shadow-lg dark:bg-slate-900/70'
-                    : 'bg-white/30 dark:bg-slate-900/30'
-                }`}
-              >
-                <p className="text-3xl font-black text-slate-900 dark:text-white">{profile.following_count}</p>
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">Takip edilen</p>
-              </button>
+            <div className="grid grid-cols-3 gap-2 rounded-2xl border border-white/30 bg-white/50 p-2 text-sm font-semibold text-slate-600 dark:border-slate-800/60 dark:bg-slate-900/40 dark:text-slate-300">
+              {[{ label: 'Gönderi', value: posts.length, key: 'grid' }, { label: 'Takipçi', value: profile.follower_count, key: 'followers' }, { label: 'Takip edilen', value: profile.following_count, key: 'following' }].map(item => (
+                <button
+                  key={item.label}
+                  aria-label={`View ${item.label}`}
+                  onClick={() => loadTab(item.key as TabType)}
+                  className={`flex flex-col items-center justify-center rounded-xl py-2 transition ${
+                    tab === item.key || (item.key === 'grid' && tab === 'list')
+                      ? 'bg-white shadow-sm text-slate-900 dark:bg-slate-950/80 dark:text-white'
+                      : 'hover:bg-white/60 dark:hover:bg-slate-900/60'
+                  }`}
+                >
+                  <span className="text-base font-bold">{item.value}</span>
+                  <span className="text-[11px] tracking-wide uppercase text-slate-400 dark:text-slate-500">{item.label}</span>
+                </button>
+              ))}
             </div>
 
             <div className="rounded-2xl border border-white/60 bg-white/70 p-1 shadow-inner dark:border-slate-800 dark:bg-slate-900/60">
