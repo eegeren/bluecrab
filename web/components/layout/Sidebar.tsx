@@ -111,7 +111,8 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   }, [pathname]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : ''
+    const isMobile = typeof window !== 'undefined' ? window.innerWidth < 1024 : true
+    document.body.style.overflow = isOpen && isMobile ? 'hidden' : ''
     return () => {
       document.body.style.overflow = ''
     }
@@ -137,17 +138,17 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-[85] bg-black/40 cursor-pointer"
+          className="fixed inset-0 z-[85] bg-black/40 cursor-pointer lg:hidden"
           onClick={onClose}
         />
       )}
 
-      <aside className={`fixed left-0 top-0 h-full w-[78vw] max-w-80 bg-white dark:bg-[#0a1628] border-r border-blue-100 dark:border-[#162033] flex flex-col py-6 px-4 z-[90] transition-transform duration-300 overflow-y-auto ${
+      <aside className={`fixed left-0 top-0 h-full w-[78vw] max-w-80 lg:w-72 lg:max-w-72 bg-white dark:bg-[#0a1628] border-r border-blue-100 dark:border-[#162033] flex flex-col py-6 px-4 z-[90] transition-transform duration-300 overflow-y-auto lg:translate-x-0 ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
       <div className="mb-8 flex items-start justify-between gap-2">
         {/* Logo */}
-        <Link href="/" onClick={onClose} className="flex items-center gap-3 px-2 group">
+        <Link href="/" onClick={onClose} className="flex items-center gap-3 px-2 group min-w-0 flex-1">
           <Image
             src={logoSrc}
             alt="BlueCrab"
@@ -157,14 +158,14 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
             onError={() => setLogoSrc('/blue-crab.svg')}
             className="rounded-xl object-contain shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-shadow"
           />
-          <span className="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+          <span className="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight whitespace-nowrap">
             Blue<span className="text-blue-500">Crab</span>
           </span>
         </Link>
         <button
           type="button"
           onClick={onClose}
-          className="mt-1 p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+          className="mt-1 p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors lg:hidden"
           aria-label="Close menu"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
