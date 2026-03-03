@@ -75,32 +75,31 @@ export default function NotificationsPage() {
           {list.map((n, i) => (
             <div
               key={n.id}
-              className={`flex items-center gap-4 px-5 py-4 ${!n.is_read ? 'bg-blue-50 dark:bg-blue-900/10' : ''} ${i > 0 ? 'border-t border-slate-100 dark:border-slate-800' : ''}`}
+              className={`flex items-center gap-4 px-5 py-4 ${!n.is_read ? 'bg-blue-50/70 dark:bg-blue-900/20' : ''} ${i > 0 ? 'border-t border-slate-100 dark:border-slate-800/70' : ''}`}
             >
               <div className="relative">
                 <Link href={`/profile/${n.actor.id}`}>
-                  <Avatar src={n.actor.avatar_url} username={n.actor.username} size={44} />
+                  <Avatar src={n.actor.avatar_url} username={n.actor.username} size={48} />
                 </Link>
-                <div className="absolute -bottom-1 -right-1">
+                <div className="absolute -bottom-0.5 -right-0.5">
                   {typeIcon(n.type)}
                 </div>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-slate-800 dark:text-slate-200">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-800 dark:text-slate-100">
                   <Link href={`/profile/${n.actor.id}`} className="font-semibold hover:text-blue-600 dark:hover:text-blue-400">
                     {n.actor.username}
                   </Link>
-                  {' '}{typeLabel(n.type)}
+                  <span className="text-slate-500 dark:text-slate-400">{typeLabel(n.type)}</span>
                   {n.post_id && (
-                    <>
-                      {' · '}
-                      <Link href={`/post/${n.post_id}`} className="text-blue-600 dark:text-blue-400 hover:underline">View post</Link>
-                    </>
+                    <Link href={`/post/${n.post_id}`} className="text-blue-600 dark:text-blue-400 font-medium">
+                      View post
+                    </Link>
                   )}
-                </p>
+                </div>
                 <p className="text-xs text-slate-400 mt-0.5">{formatDistanceToNow(n.created_at)}</p>
               </div>
-              {!n.is_read && <div className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />}
+              {!n.is_read && <span className="w-2 h-2 rounded-full bg-blue-500 shadow shadow-blue-500/40" />}
             </div>
           ))}
         </div>
