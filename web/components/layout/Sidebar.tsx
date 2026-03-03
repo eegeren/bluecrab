@@ -143,7 +143,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
         />
       )}
 
-      <aside className={`fixed left-0 top-0 h-full w-[78vw] max-w-80 lg:w-72 lg:max-w-72 bg-white dark:bg-[#0a1628] border-r border-blue-100 dark:border-[#162033] flex flex-col py-6 px-4 z-[90] transition-transform duration-300 overflow-y-auto lg:translate-x-0 ${
+      <aside className={`fixed left-0 top-0 h-full w-[72vw] max-w-[300px] bg-white dark:bg-[#0a1628] border-r border-blue-100 dark:border-[#162033] flex flex-col py-6 px-4 z-[90] transition-transform duration-300 overflow-y-auto lg:w-72 lg:max-w-72 lg:translate-x-0 ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
       <div className="mb-8 flex items-start justify-between gap-2">

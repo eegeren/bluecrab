@@ -20,21 +20,17 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         <div className="sticky top-0 z-[70] bg-white dark:bg-[#0a1628] border-b border-blue-100 dark:border-[#162033]">
           <div className="flex items-center justify-between px-3 py-3 gap-2">
             <div className="flex items-center gap-2 min-w-0">
-              <button
-                onClick={toggleSidebar}
-                className={`p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-400 active:scale-95 lg:hidden ${loggedIn ? '' : 'hidden'}`}
-                aria-label="Toggle menu"
-              >
-                {sidebarOpen ? (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                ) : (
+              {loggedIn && !sidebarOpen && (
+                <button
+                  onClick={toggleSidebar}
+                  className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-400 active:scale-95 lg:hidden"
+                  aria-label="Open menu"
+                >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
-                )}
-              </button>
+                </button>
+              )}
               <Image
                 src="/bluecrablogo.png"
                 alt="BlueCrab"
