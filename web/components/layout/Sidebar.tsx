@@ -89,12 +89,13 @@ const navItems = [
 interface SidebarProps {
   isOpen?: boolean
   onClose?: () => void
+  onToggle?: () => void
   width?: string // e.g. '300px' or '50vw'
   durationMs?: number
   overlay?: boolean
 }
 
-export default function Sidebar({ isOpen = false, onClose, width = '72vw', durationMs = 300, overlay = false }: SidebarProps) {
+export default function Sidebar({ isOpen = false, onClose, onToggle, width = '72vw', durationMs = 300, overlay = false }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [user, setUser] = useState<UserProfile | null>(null)
@@ -127,6 +128,11 @@ export default function Sidebar({ isOpen = false, onClose, width = '72vw', durat
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [isOpen, onClose])
 
+  const toggle = () => {
+    // Prefer an explicit toggle handler; fall back to onClose for backward compatibility
+    ;(onToggle ?? onClose)?.()
+  }
+
   const logout = () => {
     removeToken()
     onClose?.()
@@ -135,6 +141,25 @@ export default function Sidebar({ isOpen = false, onClose, width = '72vw', durat
 
   return (
     <>
+      {/* Floating toggle button (bottom-left) */}
+      <button
+        type="button"
+        onClick={toggle}
+        aria-label={isOpen ? 'Close menu' : 'Open menu'}
+        aria-expanded={isOpen}
+        className="fixed bottom-4 left-4 z-[95] inline-flex items-center justify-center rounded-full bg-blue-600 text-white shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-shadow w-12 h-12"
+      >
+        {isOpen ? (
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        ) : (
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        )}
+      </button>
+
       {/* Optional overlay */}
       {isOpen && overlay && (
         <div
@@ -167,7 +192,7 @@ export default function Sidebar({ isOpen = false, onClose, width = '72vw', durat
         </Link>
         <button
           type="button"
-          onClick={onClose}
+          onClick={toggle}
           className="mt-1 p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors lg:hidden"
           aria-label="Close menu"
         >
