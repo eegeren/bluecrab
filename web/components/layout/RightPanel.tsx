@@ -51,7 +51,7 @@ export default function RightPanel() {
   }
 
   return (
-    <aside className="hidden xl:block fixed right-0 top-0 h-full w-72 py-6 px-4 overflow-y-auto bg-[#f0f6ff]/50 dark:bg-transparent">
+    <aside className="hidden xl:block fixed right-0 top-16 h-[calc(100vh-4rem)] w-72 pt-4 pb-6 px-4 overflow-y-auto bg-[#f0f6ff]/50 dark:bg-transparent">
       {/* Search */}
       <form onSubmit={handleSearch} className="relative mb-5">
         <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,5 +138,4 @@ export default function RightPanel() {
     </aside>
   )
 }
-
 
