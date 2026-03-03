@@ -39,6 +39,23 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           {children}
         </div>
       </main>
+      <button
+        type="button"
+        onClick={toggleSidebar}
+        className="fixed right-4 bottom-24 md:bottom-6 z-[80] rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-900/30 px-4 py-3 flex items-center gap-2 transition-colors"
+        aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
+      >
+        {sidebarOpen ? (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        ) : (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        )}
+        <span className="text-sm font-semibold">{sidebarOpen ? 'Kapat' : 'Menu'}</span>
+      </button>
       <RightPanel />
       <BottomNav hidden={sidebarOpen} />
       <NotificationPoller />
