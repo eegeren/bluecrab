@@ -92,7 +92,10 @@ export default function NotificationsPage() {
                   </Link>
                   {' '}{typeLabel(n.type)}
                   {n.post_id && (
-                    <> — <Link href={`/post/${n.post_id}`} className="text-blue-600 dark:text-blue-400 hover:underline">view post</Link></>
+                    <>
+                      {' · '}
+                      <Link href={`/post/${n.post_id}`} className="text-blue-600 dark:text-blue-400 hover:underline">View post</Link>
+                    </>
                   )}
                 </p>
                 <p className="text-xs text-slate-400 mt-0.5">{formatDistanceToNow(n.created_at)}</p>
