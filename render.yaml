@@ -1,6 +1,18 @@
 services:
   - type: web
-    name: circlex-api
+    name: bluecrab-web
+    runtime: node
+    plan: starter
+    autoDeploy: true
+    rootDir: web
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+  
+  - type: web
+    name: bluecrab-api
     runtime: go
     plan: starter
     autoDeploy: true

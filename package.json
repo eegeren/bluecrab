@@ -1,0 +1,15 @@
+{
+  "name": "bluecrab",
+  "version": "0.1.0",
+  "private": true,
+  "description": "BlueCrab - Social networking platform",
+  "workspaces": [
+    "web"
+  ],
+  "scripts": {
+    "dev:web": "cd web && npm run dev",
+    "build:web": "cd web && npm run build",
+    "start:web": "cd web && npm start",
+    "install:web": "cd web && npm install"
+  }
+}
