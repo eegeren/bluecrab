@@ -139,6 +139,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
         <div
           className="fixed inset-0 z-40 bg-black/40"
           onClick={onClose}
+          onTouchStart={onClose}
         />
       )}
       

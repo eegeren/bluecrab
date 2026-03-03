@@ -14,16 +14,22 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     <div className="min-h-screen bg-[#f0f6ff] dark:bg-[#030d1a]">
       <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
       <main className="xl:mr-72 min-h-screen pb-20 md:pb-6">
-        <div className="sticky top-0 z-20 bg-white dark:bg-[#0a1628] border-b border-blue-100 dark:border-[#162033]">
+        <div className="sticky top-0 z-[70] bg-white dark:bg-[#0a1628] border-b border-blue-100 dark:border-[#162033]">
           <div className="flex items-center justify-between px-3 py-3 gap-2">
             <button
               onClick={toggleSidebar}
               className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-400 active:scale-95"
               aria-label="Toggle menu"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+              {sidebarOpen ? (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
             </button>
             <span className="font-bold text-slate-900 dark:text-white text-center flex-1">Blue<span className="text-blue-500">Crab</span></span>
             <div className="w-10" />
