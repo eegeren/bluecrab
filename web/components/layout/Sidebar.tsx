@@ -137,13 +137,12 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/40"
+          className="fixed inset-0 z-[85] bg-black/40 cursor-pointer"
           onClick={onClose}
-          onTouchStart={onClose}
         />
       )}
-      
-      <aside className={`fixed left-0 top-0 h-full w-[78vw] max-w-80 bg-white dark:bg-[#0a1628] border-r border-blue-100 dark:border-[#162033] flex flex-col py-6 px-4 z-50 transition-transform duration-300 overflow-y-auto ${
+
+      <aside className={`fixed left-0 top-0 h-full w-[78vw] max-w-80 bg-white dark:bg-[#0a1628] border-r border-blue-100 dark:border-[#162033] flex flex-col py-6 px-4 z-[90] transition-transform duration-300 overflow-y-auto ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
       <div className="mb-8 flex items-start justify-between gap-2">
