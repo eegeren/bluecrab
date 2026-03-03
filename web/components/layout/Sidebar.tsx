@@ -144,11 +144,10 @@ export default function Sidebar({ isOpen = false, onClose, width = '72vw', durat
       )}
 
       {/** compute width and duration classes dynamically **/}
-      <aside className={`fixed left-0 top-0 h-full bg-white dark:bg-[#0a1628] border-r border-blue-100 dark:border-[#162033] flex flex-col py-6 px-4 z-[90] transition-transform overflow-y-auto lg:translate-x-0 ${
-        // width handling: allow arbitrary width values like '300px' or '50vw'
+      <aside className={`fixed left-0 top-0 h-full bg-white dark:bg-[#0a1628] border-r border-blue-100 dark:border-[#162033] flex flex-col py-6 px-4 z-[90] transition-transform overflow-y-auto ${
         (width ? `w-[${width}] max-w-[300px] lg:w-72 lg:max-w-72` : 'w-[72vw] max-w-[300px] lg:w-72 lg:max-w-72') + ' ' +
-        ` ${`duration-[${durationMs}ms]`} ` +
-        (isOpen ? 'translate-x-0' : '-translate-x-full')
+        `duration-[${durationMs}ms] ` +
+        (isOpen ? 'translate-x-0 lg:translate-x-0' : '-translate-x-full lg:-translate-x-full')
       }`}>
       <div className="mb-8 flex items-start justify-between gap-2">
         {/* Logo */}
