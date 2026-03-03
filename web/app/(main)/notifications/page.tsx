@@ -75,31 +75,36 @@ export default function NotificationsPage() {
           {list.map((n, i) => (
             <div
               key={n.id}
-              className={`flex items-center gap-4 px-5 py-4 ${!n.is_read ? 'bg-blue-50/70 dark:bg-blue-900/20' : ''} ${i > 0 ? 'border-t border-slate-100 dark:border-slate-800/70' : ''}`}
+              className={`flex flex-wrap items-center gap-4 px-5 py-4 ${!n.is_read ? 'bg-blue-50/60 dark:bg-blue-900/15' : ''} ${i > 0 ? 'border-t border-slate-100 dark:border-slate-800/70' : ''}`}
             >
-              <div className="relative">
-                <Link href={`/profile/${n.actor.id}`}>
-                  <Avatar src={n.actor.avatar_url} username={n.actor.username} size={48} />
-                </Link>
-                <div className="absolute -bottom-0.5 -right-0.5">
-                  {typeIcon(n.type)}
-                </div>
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-800 dark:text-slate-100">
-                  <Link href={`/profile/${n.actor.id}`} className="font-semibold hover:text-blue-600 dark:hover:text-blue-400">
-                    {n.actor.username}
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="relative">
+                  <Link href={`/profile/${n.actor.id}`}>
+                    <Avatar src={n.actor.avatar_url} username={n.actor.username} size={46} />
                   </Link>
-                  <span className="text-slate-500 dark:text-slate-400">{typeLabel(n.type)}</span>
-                  {n.post_id && (
-                    <Link href={`/post/${n.post_id}`} className="text-blue-600 dark:text-blue-400 font-medium">
-                      View post
-                    </Link>
-                  )}
+                  <div className="absolute -bottom-1 -right-1">{typeIcon(n.type)}</div>
                 </div>
-                <p className="text-xs text-slate-400 mt-0.5">{formatDistanceToNow(n.created_at)}</p>
+                <div className="min-w-0">
+                  <div className="text-sm text-slate-900 dark:text-slate-100">
+                    <Link href={`/profile/${n.actor.id}`} className="font-semibold hover:text-blue-600 dark:hover:text-blue-400">
+                      {n.actor.username}
+                    </Link>
+                    <span className="text-slate-500 dark:text-slate-400"> {typeLabel(n.type)}</span>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-0.5">{formatDistanceToNow(n.created_at)}</p>
+                </div>
               </div>
-              {!n.is_read && <span className="w-2 h-2 rounded-full bg-blue-500 shadow shadow-blue-500/40" />}
+              <div className="ml-auto flex items-center gap-2">
+                {n.post_id && (
+                  <Link
+                    href={`/post/${n.post_id}`}
+                    className="rounded-full border border-blue-200 px-3 py-1 text-xs font-semibold text-blue-600 transition hover:bg-blue-50 dark:border-blue-500/40 dark:text-blue-300 dark:hover:bg-blue-500/10"
+                  >
+                    View post
+                  </Link>
+                )}
+                {!n.is_read && <span className="w-2 h-2 rounded-full bg-blue-500 shadow shadow-blue-500/40" />}
+              </div>
             </div>
           ))}
         </div>
