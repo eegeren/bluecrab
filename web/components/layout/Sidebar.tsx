@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { useCallback, useEffect, useState, type CSSProperties } from 'react'
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 import { auth, notifications as notifApi, messages as msgApi } from '@/lib/api'
 import { removeToken, isLoggedIn } from '@/lib/auth'
 import Avatar from '@/components/user/Avatar'
@@ -119,8 +119,12 @@ export default function Sidebar({ isOpen = false, onClose, width = '72vw', durat
     msgApi.unreadCount().then(r => setUnreadMsg(r.count)).catch(() => {})
   }, [])
 
+  const lastPathRef = useRef(pathname)
   useEffect(() => {
-    if (open) closeMenu()
+    if (lastPathRef.current !== pathname && open) {
+      closeMenu()
+    }
+    lastPathRef.current = pathname
   }, [pathname, open, closeMenu])
 
   useEffect(() => {
