@@ -51,18 +51,6 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           </div>
         </div>
       </main>
-      {loggedIn && !sidebarOpen && (
-        <button
-          type="button"
-          onClick={toggleSidebar}
-          className="fixed left-3 top-1/2 transform -translate-y-1/2 z-[80] rounded-md bg-blue-600 hover:bg-blue-700 text-white shadow-md p-2 lg:hidden"
-          aria-label="Open menu"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-      )}
       <RightPanel />
       <BottomNav hidden={sidebarOpen || !loggedIn} />
       <NotificationPoller />
