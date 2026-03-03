@@ -103,6 +103,10 @@ export default function Sidebar({ isOpen = false, onClose, onToggle, width = '72
   const [unreadMsg, setUnreadMsg] = useState(0)
   const [logoSrc, setLogoSrc] = useState('/bluecrablogo.png?v=20260302')
 
+  // Uncontrolled fallback: if parent doesn't pass isOpen/onToggle, we manage open state here
+  const [internalOpen, setInternalOpen] = useState(false)
+  const open = typeof isOpen === 'boolean' ? isOpen : internalOpen
+
   useEffect(() => {
     if (!isLoggedIn()) return
     auth.me().then(setUser).catch(() => {})
@@ -111,31 +115,37 @@ export default function Sidebar({ isOpen = false, onClose, onToggle, width = '72
   }, [])
 
   useEffect(() => {
-    if (isOpen) onClose?.()
-  }, [pathname]) // eslint-disable-line react-hooks/exhaustive-deps
+    if (open) closeMenu()
+  }, [pathname]) 
 
   useEffect(() => {
-    // Do not force body overflow; let overlay/parent decide. noop.
+
     return () => {}
-  }, [isOpen])
+  }, [open])
 
   useEffect(() => {
-    if (!isOpen) return
+    if (!open) return
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose?.()
+      if (event.key === 'Escape') closeMenu()
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [isOpen, onClose])
+  }, [open, onClose])
+
+  const closeMenu = () => {
+    onClose?.()
+    setInternalOpen(false)
+  }
 
   const toggle = () => {
-    // Prefer an explicit toggle handler; fall back to onClose for backward compatibility
-    ;(onToggle ?? onClose)?.()
+    if (onToggle) return onToggle()
+    // uncontrolled fallback
+    setInternalOpen(v => !v)
   }
 
   const logout = () => {
     removeToken()
-    onClose?.()
+    closeMenu()
     router.push('/login')
   }
 
@@ -145,11 +155,11 @@ export default function Sidebar({ isOpen = false, onClose, onToggle, width = '72
       <button
         type="button"
         onClick={toggle}
-        aria-label={isOpen ? 'Close menu' : 'Open menu'}
-        aria-expanded={isOpen}
+        aria-label={open ? 'Close menu' : 'Open menu'}
+        aria-expanded={open}
         className="fixed bottom-4 left-4 z-[95] inline-flex items-center justify-center rounded-full bg-blue-600 text-white shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-shadow w-12 h-12"
       >
-        {isOpen ? (
+        {open ? (
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -161,10 +171,10 @@ export default function Sidebar({ isOpen = false, onClose, onToggle, width = '72
       </button>
 
       {/* Optional overlay */}
-      {isOpen && overlay && (
+      {open && overlay && (
         <div
           className="fixed inset-0 z-[85] bg-black/40 cursor-pointer lg:hidden"
-          onClick={onClose}
+          onClick={closeMenu}
         />
       )}
 
@@ -172,11 +182,11 @@ export default function Sidebar({ isOpen = false, onClose, onToggle, width = '72
       <aside className={`fixed left-0 top-0 h-full bg-white dark:bg-[#0a1628] border-r border-blue-100 dark:border-[#162033] flex flex-col py-6 px-4 z-[90] transition-transform overflow-y-auto ${
         (width ? `w-[${width}] max-w-[300px] lg:w-72 lg:max-w-72` : 'w-[72vw] max-w-[300px] lg:w-72 lg:max-w-72') + ' ' +
         `duration-[${durationMs}ms] ` +
-        (isOpen ? 'translate-x-0 lg:translate-x-0' : '-translate-x-full lg:-translate-x-full')
+        (open ? 'translate-x-0 lg:translate-x-0' : '-translate-x-full lg:-translate-x-full')
       }`}>
       <div className="mb-8 flex items-start justify-between gap-2">
         {/* Logo */}
-        <Link href="/" onClick={onClose} className="flex items-center gap-3 px-2 group min-w-0 flex-1">
+        <Link href="/" onClick={closeMenu} className="flex items-center gap-3 px-2 group min-w-0 flex-1">
           <Image
             src={logoSrc}
             alt="BlueCrab"
@@ -190,16 +200,6 @@ export default function Sidebar({ isOpen = false, onClose, onToggle, width = '72
             Blue<span className="text-blue-500">Crab</span>
           </span>
         </Link>
-        <button
-          type="button"
-          onClick={toggle}
-          className="mt-1 p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors lg:hidden"
-          aria-label="Close menu"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
       </div>
 
       {/* Nav */}
@@ -210,7 +210,7 @@ export default function Sidebar({ isOpen = false, onClose, onToggle, width = '72
             <Link
               key={item.href}
               href={item.href}
-              onClick={onClose}
+              onClick={closeMenu}
               className={`flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-all relative ${
                 active
                   ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400'
@@ -236,7 +236,7 @@ export default function Sidebar({ isOpen = false, onClose, onToggle, width = '72
         {user && (
           <Link
             href={`/profile/${user.id}`}
-            onClick={onClose}
+            onClick={closeMenu}
             className={`flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-all ${
               pathname.startsWith('/profile')
                 ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400'
@@ -274,7 +274,7 @@ export default function Sidebar({ isOpen = false, onClose, onToggle, width = '72
             </button>
           </div>
         ) : (
-          <Link href="/login" onClick={onClose} className="block px-3 py-2 text-sm font-semibold text-blue-500 dark:text-blue-400 hover:underline">
+          <Link href="/login" onClick={closeMenu} className="block px-3 py-2 text-sm font-semibold text-blue-500 dark:text-blue-400 hover:underline">
             Sign in
           </Link>
         )}
