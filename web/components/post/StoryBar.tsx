@@ -25,7 +25,7 @@ export default function StoryBar({ users, currentUser }: Props) {
                 </svg>
               </div>
             </div>
-            <span className="text-xs text-slate-500 dark:text-slate-400 w-14 text-center truncate">Hikayem</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 w-14 text-center truncate">My Story</span>
           </div>
         )}
 
