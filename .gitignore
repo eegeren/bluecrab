@@ -1,0 +1,14 @@
+﻿.env
+
+# root deps/build
+node_modules/
+.next/
+bin/
+
+# web app artifacts
+web/node_modules/
+web/.next/
+web/out/
+web/.vercel/
+web/*.tsbuildinfo
+web/*.log

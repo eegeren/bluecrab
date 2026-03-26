@@ -1,0 +1,8 @@
+-- ============================================================
+-- 007: Reserved for future Reddit/community schema refactor
+-- ============================================================
+--
+-- This migration intentionally does not modify the database.
+-- The previous draft was incomplete and did not match the schema
+-- expected by the current Go API, which caused startup migrations
+-- to fail and prevented deploys from becoming healthy.
