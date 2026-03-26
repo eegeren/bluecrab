@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
-import { hash } from "bcryptjs"
+import bcrypt from "bcryptjs"
 import { z } from "zod"
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/lib/db"
 import { serializeAuthUser } from "@/lib/auth"
 
 const registerSchema = z.object({
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
 
     const requestedUsername = (parsed.data.username || slugFromEmail(email)).toLowerCase()
     const username = await uniqueUsername(requestedUsername)
-    const passwordHash = await hash(parsed.data.password, 10)
+    const passwordHash = await bcrypt.hash(parsed.data.password, 10)
 
     const user = await prisma.user.create({
       data: {
@@ -55,7 +55,8 @@ export async function POST(request: Request) {
       success: true,
       user: serializeAuthUser(user),
     })
-  } catch {
-    return NextResponse.json({ error: "Registration failed. Please try again." }, { status: 500 })
+  } catch (err) {
+    console.error("REGISTER ERROR:", err)
+    return NextResponse.json({ error: String(err) }, { status: 500 })
   }
 }
