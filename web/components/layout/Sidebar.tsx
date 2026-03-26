@@ -169,7 +169,7 @@ export default function Sidebar({ isOpen = false, onClose, width = '72vw', durat
             width={56}
             height={56}
             unoptimized
-            onError={() => setLogoSrc('/blue-crab.svg')}
+            onError={() => setLogoSrc('/bluecrablogo.png')}
             className="rounded-xl object-contain shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-shadow"
           />
           <span className="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight whitespace-nowrap">

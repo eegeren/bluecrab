@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { Bell, Compass, Home, PlusSquare, Search, Settings, Shield, Sparkles, UserRound } from "lucide-react"
 import { logoutAction } from "@/app/actions"
 import { formatCount, formatRelativeDate } from "@/lib/utils"
@@ -27,8 +28,16 @@ export function AppShell({
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.14),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(14,165,233,0.18),_transparent_25%),linear-gradient(180deg,#06101c_0%,#071423_45%,#091728_100%)] text-white">
       <div className="sticky top-0 z-40 border-b border-white/10 bg-[#07111d]/90 backdrop-blur lg:hidden">
         <div className="flex items-center justify-between px-4 py-3">
-          <Link href="/" className="font-heading text-xl font-semibold">
-            BlueCrab
+          <Link href="/" className="flex items-center gap-3">
+            <Image
+              src="/bluecrablogo.png"
+              alt="BlueCrab"
+              width={40}
+              height={40}
+              className="rounded-xl object-cover"
+              unoptimized
+            />
+            <span className="font-heading text-xl font-semibold">BlueCrab</span>
           </Link>
           <div className="flex items-center gap-2 text-xs text-slate-300">
             <Link href="/explore" className="rounded-full border border-white/10 px-3 py-1.5">
@@ -51,9 +60,14 @@ export function AppShell({
         <aside className="hidden lg:flex lg:flex-col lg:gap-5">
           <Link href="/" className="rounded-[28px] border border-white/10 bg-white/5 px-5 py-4 backdrop-blur">
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#7dd3fc,#38bdf8,#0ea5e9)] text-lg font-bold text-slate-950">
-                B
-              </div>
+              <Image
+                src="/bluecrablogo.png"
+                alt="BlueCrab"
+                width={44}
+                height={44}
+                className="rounded-2xl object-cover shadow-lg shadow-cyan-500/20"
+                unoptimized
+              />
               <div>
                 <div className="font-heading text-xl font-semibold">BlueCrab</div>
                 <div className="text-xs text-slate-400">Premium community discussion</div>

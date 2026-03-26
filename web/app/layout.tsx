@@ -8,6 +8,20 @@ const heading = Space_Grotesk({ subsets: ["latin"], variable: "--font-heading" }
 export const metadata: Metadata = {
   title: "BlueCrab",
   description: "BlueCrab is a premium Reddit-like platform for communities, posts, comments, and discovery.",
+  icons: {
+    icon: "/bluecrablogo.png",
+    shortcut: "/bluecrablogo.png",
+    apple: "/bluecrablogo.png",
+  },
+  openGraph: {
+    title: "BlueCrab",
+    description: "BlueCrab is a premium Reddit-like platform for communities, posts, comments, and discovery.",
+    images: [
+      {
+        url: "/bluecrablogo.png",
+      },
+    ],
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
