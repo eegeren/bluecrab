@@ -56,7 +56,7 @@ export async function POST(request: Request) {
       user: serializeAuthUser(user),
     })
   } catch (err) {
-    console.error("REGISTER ERROR:", err)
+    console.error("DB ERROR:", err)
     return NextResponse.json({ error: String(err) }, { status: 500 })
   }
 }

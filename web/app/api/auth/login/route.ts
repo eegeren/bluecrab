@@ -32,7 +32,8 @@ export async function POST(request: Request) {
       success: true,
       user: serializeAuthUser(user),
     })
-  } catch {
-    return NextResponse.json({ error: "Login failed. Please try again." }, { status: 500 })
+  } catch (err) {
+    console.error("DB ERROR:", err)
+    return NextResponse.json({ error: String(err) }, { status: 500 })
   }
 }
