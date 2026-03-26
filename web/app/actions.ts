@@ -2,17 +2,12 @@
 
 import { MemberRole, ModerationActionType, ModerationState, NotificationType, PostMode, PostType, ReportReason, ReputationCategory, TemplateType } from "@prisma/client"
 import { revalidatePath } from "next/cache"
-import { redirect } from "next/navigation"
 import { z } from "zod"
 import { generateDiscussionSummary } from "@/lib/ai-summary"
 import { hasDatabaseUrl, prisma } from "@/lib/prisma"
 import {
-  createSession,
-  destroySession,
   getSessionUser,
-  hashPassword,
   requireUser,
-  verifyPassword,
 } from "@/lib/session"
 import { slugify } from "@/lib/utils"
 
@@ -61,87 +56,6 @@ function hasBlockedLink(text?: string | null) {
   if (!text) return false
   const blocked = ["bit.ly", "tinyurl.com", "loweffortnews.example"]
   return blocked.some((domain) => text.toLowerCase().includes(domain))
-}
-
-export async function registerAction(_: unknown, formData: FormData) {
-  if (!hasDatabaseUrl) {
-    return { error: "Authentication requires a configured database." }
-  }
-  if (hasBlockedLink(String(formData.get("username") || ""))) {
-    return { error: "Choose a normal username." }
-  }
-  const schema = z.object({
-    username: z.string().min(3).max(24).regex(/^[a-zA-Z0-9_]+$/),
-    email: z.string().email(),
-    password: z.string().min(8),
-  })
-
-  const parsed = schema.safeParse({
-    username: formData.get("username"),
-    email: formData.get("email"),
-    password: formData.get("password"),
-  })
-
-  if (!parsed.success) {
-    return { error: "Check your sign up details and try again." }
-  }
-
-  const username = parsed.data.username.toLowerCase()
-  const existing = await prisma.user.findFirst({
-    where: {
-      OR: [{ username }, { email: parsed.data.email.toLowerCase() }],
-    },
-  })
-
-  if (existing) {
-    return { error: "That username or email is already in use." }
-  }
-
-  const user = await prisma.user.create({
-    data: {
-      username,
-      email: parsed.data.email.toLowerCase(),
-      passwordHash: await hashPassword(parsed.data.password),
-    },
-  })
-
-  await createSession(user.id)
-  redirect("/")
-}
-
-export async function loginAction(_: unknown, formData: FormData) {
-  if (!hasDatabaseUrl) {
-    return { error: "Authentication requires a configured database." }
-  }
-  const schema = z.object({
-    email: z.string().email(),
-    password: z.string().min(1),
-  })
-
-  const parsed = schema.safeParse({
-    email: formData.get("email"),
-    password: formData.get("password"),
-  })
-
-  if (!parsed.success) {
-    return { error: "Enter a valid email and password." }
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { email: parsed.data.email.toLowerCase() },
-  })
-
-  if (!user || !(await verifyPassword(parsed.data.password, user.passwordHash))) {
-    return { error: "Invalid credentials." }
-  }
-
-  await createSession(user.id)
-  redirect("/")
-}
-
-export async function logoutAction() {
-  await destroySession()
-  redirect("/login")
 }
 
 export async function createCommunityAction(_: unknown, formData: FormData) {

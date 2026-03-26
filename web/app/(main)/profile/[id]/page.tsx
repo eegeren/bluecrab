@@ -4,7 +4,6 @@ import { FormEvent, use, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { auth, friends as friendsApi, users as usersApi } from '@/lib/api'
-import { isLoggedIn } from '@/lib/auth'
 import { useToast } from '@/context/ToastContext'
 import Avatar from '@/components/user/Avatar'
 import FollowButton from '@/components/user/FollowButton'
@@ -105,15 +104,21 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
       usersApi.getProfile(id).then(setProfile),
       usersApi.getPosts(id).then(setPosts),
     ]
-    if (isLoggedIn()) {
-      fetches.push(auth.me().then(setCurrentUser))
-      fetches.push(
-        usersApi
-          .friendshipStatus(id)
-          .then(s => setFriendship(s.status))
-          .catch(() => setFriendship('none'))
-      )
-    }
+    fetches.push(
+      auth
+        .me()
+        .then((me) => {
+          setCurrentUser(me)
+          return usersApi
+            .friendshipStatus(id)
+            .then(s => setFriendship(s.status))
+            .catch(() => setFriendship('none'))
+        })
+        .catch(() => {
+          setCurrentUser(null)
+          setFriendship('none')
+        })
+    )
     Promise.all(fetches).finally(() => setLoading(false))
   }, [id])
 

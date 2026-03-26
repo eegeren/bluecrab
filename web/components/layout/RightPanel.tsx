@@ -2,8 +2,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { search, users as usersApi } from '@/lib/api'
-import { isLoggedIn } from '@/lib/auth'
+import { auth, search, users as usersApi } from '@/lib/api'
 import Avatar from '@/components/user/Avatar'
 import FollowButton from '@/components/user/FollowButton'
 import { SkeletonBox } from '@/components/ui/Skeleton'
@@ -15,7 +14,12 @@ export default function RightPanel() {
   const [results, setResults] = useState<UserPublic[]>([])
   const [searching, setSearching] = useState(false)
   const [suggested, setSuggested] = useState<UserProfile[]>([])
+  const [viewer, setViewer] = useState<UserProfile | null>(null)
   const [loadingSuggested, setLoadingSuggested] = useState(true)
+
+  useEffect(() => {
+    auth.me().then(setViewer).catch(() => setViewer(null))
+  }, [])
 
   useEffect(() => {
     // Load suggested users via search with a common query
@@ -113,7 +117,7 @@ export default function RightPanel() {
                   </Link>
                   <p className="text-xs text-slate-400 truncate">{u.follower_count} followers</p>
                 </div>
-                {isLoggedIn() && (
+                {viewer && (
                   <FollowButton userId={u.id} isFollowing={u.is_following} />
                 )}
               </div>
@@ -138,4 +142,3 @@ export default function RightPanel() {
     </aside>
   )
 }
-

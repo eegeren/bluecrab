@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 import { auth, notifications as notifApi, messages as msgApi } from '@/lib/api'
-import { removeToken, isLoggedIn } from '@/lib/auth'
+import { logout as logoutUser } from '@/lib/client-auth'
 import Avatar from '@/components/user/Avatar'
 import ThemeToggle from '@/components/ui/ThemeToggle'
 import type { UserProfile } from '@/types'
@@ -113,10 +113,16 @@ export default function Sidebar({ isOpen = false, onClose, width = '72vw', durat
   }, [onClose])
 
   useEffect(() => {
-    if (!isLoggedIn()) return
-    auth.me().then(setUser).catch(() => {})
-    notifApi.unreadCount().then(r => setUnread(r.count)).catch(() => {})
-    msgApi.unreadCount().then(r => setUnreadMsg(r.count)).catch(() => {})
+    auth
+      .me()
+      .then((me) => {
+        setUser(me)
+        notifApi.unreadCount().then(r => setUnread(r.count)).catch(() => {})
+        msgApi.unreadCount().then(r => setUnreadMsg(r.count)).catch(() => {})
+      })
+      .catch(() => {
+        setUser(null)
+      })
   }, [])
 
   const lastPathRef = useRef(pathname)
@@ -136,10 +142,11 @@ export default function Sidebar({ isOpen = false, onClose, width = '72vw', durat
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [open, closeMenu])
 
-  const logout = () => {
-    removeToken()
+  const logout = async () => {
+    await logoutUser()
     closeMenu()
     router.push('/login')
+    router.refresh()
   }
 
   return (

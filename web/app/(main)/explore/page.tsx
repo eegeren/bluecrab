@@ -19,7 +19,7 @@ export default async function ExplorePage() {
       </section>
 
       <section className="grid gap-4 md:grid-cols-2">
-        {data.featuredCommunities?.map((community) => (
+        {data.featuredCommunities?.map((community: any) => (
           <div key={`featured-${community.id}`} className="rounded-[30px] border border-cyan-400/15 bg-[linear-gradient(180deg,rgba(34,211,238,0.08),rgba(255,255,255,0.03))] p-5">
             <div className="mb-2 text-xs uppercase tracking-[0.22em] text-cyan-200">Featured</div>
             <div className="font-heading text-2xl font-semibold text-white">{community.name}</div>
@@ -28,7 +28,7 @@ export default async function ExplorePage() {
             <div className="mt-4 text-xs text-cyan-100">{community.featuredLabel || "High-signal staff pick"}</div>
           </div>
         ))}
-        {data.communities.map((community) => {
+        {data.communities.map((community: any) => {
           const isJoined = Array.isArray(community.members) && community.members.length > 0
           return (
             <div key={community.id} className="rounded-[30px] border border-white/10 bg-white/5 p-5">
@@ -66,7 +66,7 @@ export default async function ExplorePage() {
             Back to feed
           </Link>
         </div>
-        {data.posts.map((post) => (
+        {data.posts.map((post: any) => (
           <PostCard key={post.id} post={post} viewerId={user?.id} compact />
         ))}
       </section>

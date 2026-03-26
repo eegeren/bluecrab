@@ -2,8 +2,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { messages as msgApi } from '@/lib/api'
-import { isLoggedIn } from '@/lib/auth'
+import { auth, messages as msgApi } from '@/lib/api'
 import { formatDistanceToNow } from '@/lib/time'
 import Avatar from '@/components/user/Avatar'
 import { MessageSkeleton } from '@/components/ui/Skeleton'
@@ -15,8 +14,11 @@ export default function MessagesPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!isLoggedIn()) { router.push('/login'); return }
-    msgApi.conversations().then(setConvs).finally(() => setLoading(false))
+    auth
+      .me()
+      .then(() => msgApi.conversations().then(setConvs))
+      .catch(() => router.push('/login'))
+      .finally(() => setLoading(false))
   }, [router])
 
   return (
@@ -68,4 +70,3 @@ export default function MessagesPage() {
     </div>
   )
 }
-

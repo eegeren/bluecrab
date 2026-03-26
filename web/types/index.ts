@@ -77,7 +77,7 @@ export interface SearchResult {
 }
 
 export interface AuthResponse {
-  token: string
+  success?: boolean
   user: UserProfile
 }
 
@@ -155,5 +155,4 @@ export interface ForumThread {
   category: ForumCategory
   replies?: ForumReply[]
 }
-
 

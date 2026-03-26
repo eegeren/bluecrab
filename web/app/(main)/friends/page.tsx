@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { auth, friends } from '@/lib/api'
-import { isLoggedIn } from '@/lib/auth'
 import { useToast } from '@/context/ToastContext'
 import Avatar from '@/components/user/Avatar'
 import type { FriendRequest, UserProfile, UserPublic } from '@/types'
@@ -22,10 +21,6 @@ export default function FriendsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!isLoggedIn()) {
-      router.push('/login')
-      return
-    }
     Promise.all([auth.me(), friends.list(1), friends.requests(1)])
       .then(([me, myFriends, incoming]) => {
         setCurrentUser(me)
@@ -34,6 +29,7 @@ export default function FriendsPage() {
         setFriendsHasMore(myFriends.length >= 20)
         setRequestsHasMore(incoming.length >= 20)
       })
+      .catch(() => router.push('/login'))
       .finally(() => setLoading(false))
   }, [router])
 

@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation"
-import { loginAction } from "@/app/actions"
 import { AuthForm } from "@/components/bluecrab/AuthForm"
 import { getSessionUser } from "@/lib/session"
 
@@ -32,7 +31,6 @@ export default async function LoginPage() {
           <AuthForm
             title="Sign in"
             description="Access your communities, picks, and conversation history."
-            action={loginAction}
             mode="login"
           />
         </div>

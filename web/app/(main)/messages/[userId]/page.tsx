@@ -4,7 +4,6 @@ import { use } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { messages as msgApi, users as usersApi, auth } from '@/lib/api'
-import { isLoggedIn } from '@/lib/auth'
 import { formatDistanceToNow } from '@/lib/time'
 import Avatar from '@/components/user/Avatar'
 import Spinner from '@/components/ui/Spinner'
@@ -22,16 +21,15 @@ export default function ChatPage({ params }: { params: Promise<{ userId: string 
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!isLoggedIn()) { router.push('/login'); return }
     Promise.all([
+      auth.me(),
       msgApi.history(userId),
       usersApi.getProfile(userId),
-      auth.me(),
-    ]).then(([history, user, me]) => {
+    ]).then(([me, history, user]) => {
       setMsgs(history.reverse())
       setOtherUser(user)
       setCurrentUser(me)
-    }).finally(() => setLoading(false))
+    }).catch(() => router.push('/login')).finally(() => setLoading(false))
   }, [userId, router])
 
   // Auto-scroll when new messages arrive

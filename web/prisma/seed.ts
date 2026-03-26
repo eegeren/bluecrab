@@ -42,7 +42,6 @@ async function main() {
   await prisma.communityMember.deleteMany()
   await prisma.community.deleteMany()
   await prisma.userPreference.deleteMany()
-  await prisma.session.deleteMany()
   await prisma.user.deleteMany()
 
   const passwordHash = await hash("password123", 10)

@@ -137,7 +137,6 @@ model User {
   avatar                    String                   @default("")
   createdAt                 DateTime                 @default(now())
   updatedAt                 DateTime                 @updatedAt
-  sessions                  Session[]
   preferences               UserPreference?
   communities               Community[]              @relation("CommunityCreator")
   memberships               CommunityMember[]
@@ -177,17 +176,6 @@ model UserPreference {
   interests                    String[]
   hideProfileNudge             Boolean  @default(false)
   user                         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model Session {
-  id        String   @id @default(cuid())
-  token     String   @unique
-  userId    String
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
 }
 
 model Community {

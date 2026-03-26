@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation"
-import { registerAction } from "@/app/actions"
 import { AuthForm } from "@/components/bluecrab/AuthForm"
 import { getSessionUser } from "@/lib/session"
 
@@ -32,7 +31,6 @@ export default async function RegisterPage() {
           <AuthForm
             title="Create account"
             description="Start building your profile and join the communities that matter to you."
-            action={registerAction}
             mode="register"
           />
         </div>

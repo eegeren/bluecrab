@@ -1,7 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
+import { logout } from "@/lib/client-auth"
 import { Bell, Compass, Home, PlusSquare, Search, Settings, Shield, Sparkles, UserRound } from "lucide-react"
-import { logoutAction } from "@/app/actions"
 import BottomNav from "@/components/layout/BottomNav"
 import { formatCount, formatRelativeDate } from "@/lib/utils"
 
@@ -113,11 +113,16 @@ export function AppShell({
                   <div className="text-sm font-medium">{user.username}</div>
                   <div className="mt-1 line-clamp-3 text-sm text-slate-400">{user.bio || "No bio yet."}</div>
                 </div>
-                <form action={logoutAction} className="mt-4">
-                  <button className="w-full rounded-2xl border border-white/10 bg-white/6 px-4 py-2.5 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    await logout()
+                    window.location.href = "/login"
+                  }}
+                  className="mt-4 w-full rounded-2xl border border-white/10 bg-white/6 px-4 py-2.5 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white"
+                >
                     Sign out
-                  </button>
-                </form>
+                </button>
               </>
             ) : (
               <div className="space-y-2">

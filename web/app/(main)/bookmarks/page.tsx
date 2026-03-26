@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { auth, bookmarks } from '@/lib/api'
-import { isLoggedIn } from '@/lib/auth'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 import PostCard from '@/components/post/PostCard'
 import Spinner from '@/components/ui/Spinner'
@@ -17,10 +16,6 @@ export default function BookmarksPage() {
   const { items, remove, loading, loadingMore, hasMore, error, sentinelRef } = useInfiniteScroll<Post>(fetcher)
 
   useEffect(() => {
-    if (!isLoggedIn()) {
-      router.push('/login')
-      return
-    }
     auth.me().then(setCurrentUser).catch(() => router.push('/login'))
   }, [router])
 
@@ -54,5 +49,4 @@ export default function BookmarksPage() {
     </div>
   )
 }
-
 

@@ -1,8 +1,7 @@
 'use client'
 import { useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
-import { notifications as notifApi, messages as msgApi } from '@/lib/api'
-import { isLoggedIn } from '@/lib/auth'
+import { auth, notifications as notifApi, messages as msgApi } from '@/lib/api'
 import { useToast } from '@/context/ToastContext'
 
 export default function NotificationPoller() {
@@ -13,10 +12,9 @@ export default function NotificationPoller() {
   const initialized = useRef(false)
 
   useEffect(() => {
-    if (!isLoggedIn()) return
-
     const init = async () => {
       try {
+        await auth.me()
         const [notifs, convs] = await Promise.all([
           notifApi.list(1),
           msgApi.conversations(),

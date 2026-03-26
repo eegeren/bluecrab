@@ -1,4 +1,3 @@
-import { getAuthHeader } from './auth'
 import type {
   AuthResponse,
   Comment,
@@ -22,6 +21,25 @@ import type {
 declare const process: { env: { NEXT_PUBLIC_API_BASE_URL?: string } }
 const BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080/api').replace(/\/+$/, '')
 
+async function internalRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const res = await fetch(`/api${path}`, {
+    ...options,
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(options.headers as Record<string, string> | undefined),
+    },
+  })
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ error: 'Something went wrong' }))
+    throw new Error(body.error || `HTTP ${res.status}`)
+  }
+
+  if (res.status === 204) return undefined as T
+  return res.json()
+}
+
 async function request<T>(
   path: string,
   options: RequestInit = {}
@@ -33,7 +51,6 @@ async function request<T>(
       ...options,
       headers: {
         'Content-Type': 'application/json',
-        ...getAuthHeader(),
         ...(options.headers as Record<string, string> | undefined),
       },
     })
@@ -56,16 +73,17 @@ async function request<T>(
 // Auth
 export const auth = {
   login: (email: string, password: string) =>
-    request<AuthResponse>('/auth/login', {
+    internalRequest<AuthResponse>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     }),
   register: (username: string, email: string, password: string) =>
-    request<AuthResponse>('/auth/register', {
+    internalRequest<AuthResponse>('/auth/register', {
       method: 'POST',
       body: JSON.stringify({ username, email, password }),
     }),
-  me: () => request<UserProfile>('/auth/me'),
+  me: () => internalRequest<UserProfile>('/auth/me'),
+  logout: () => internalRequest<{ success: boolean }>('/auth/logout', { method: 'POST' }),
 }
 
 // Users
