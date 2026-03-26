@@ -28,10 +28,10 @@ export function PostCard({
   const viewerVote = post.votes.find((vote: any) => vote.userId === viewerId)?.value ?? 0
 
   return (
-    <article className="overflow-hidden rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.07),rgba(255,255,255,0.03))] shadow-[0_24px_80px_rgba(4,10,20,0.35)]">
-      <div className="flex flex-col gap-5 p-5 sm:p-6">
-        <div className="flex items-start gap-4">
-          <div className="flex shrink-0 flex-col items-center rounded-3xl border border-white/10 bg-black/20 px-2 py-3">
+    <article className="overflow-hidden rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.07),rgba(255,255,255,0.03))] shadow-[0_24px_80px_rgba(4,10,20,0.35)] sm:rounded-[30px]">
+      <div className="flex flex-col gap-4 p-4 sm:gap-5 sm:p-6">
+        <div className="flex items-start gap-3 sm:gap-4">
+          <div className="flex shrink-0 flex-col items-center rounded-[22px] border border-white/10 bg-black/20 px-1.5 py-2.5 sm:rounded-3xl sm:px-2 sm:py-3">
             <form action={votePostAction}>
               <input type="hidden" name="postId" value={post.id} />
               <input type="hidden" name="communitySlug" value={post.community.slug} />
@@ -58,7 +58,7 @@ export function PostCard({
           </div>
 
           <div className="min-w-0 flex-1">
-            <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+            <div className="mb-3 flex flex-wrap items-center gap-1.5 text-[11px] text-slate-400 sm:gap-2 sm:text-xs">
               <Link href={`/c/${post.community.slug}`} className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-2.5 py-1 text-cyan-200">
                 c/{post.community.slug}
               </Link>
@@ -92,9 +92,9 @@ export function PostCard({
             </div>
 
             <Link href={`/post/${post.id}`} className="block">
-              <h2 className="font-heading text-2xl font-semibold tracking-tight text-white">{post.isDeleted ? "[deleted]" : post.title}</h2>
+              <h2 className="font-heading text-xl font-semibold tracking-tight text-white sm:text-2xl">{post.isDeleted ? "[deleted]" : post.title}</h2>
               {post.body ? (
-                <p className={cn("mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-300", compact && "line-clamp-3")}>
+                <p className={cn("mt-3 whitespace-pre-wrap text-sm leading-6 text-slate-300 sm:leading-7", compact && "line-clamp-3")}>
                   {post.isDeleted ? "This post was deleted by its author." : post.body}
                 </p>
               ) : null}
@@ -111,7 +111,7 @@ export function PostCard({
             </Link>
 
             {post.type === "IMAGE" && post.imageUrl ? (
-              <div className="relative mt-4 h-[280px] overflow-hidden rounded-[26px] sm:h-[380px]">
+              <div className="relative mt-4 h-[220px] overflow-hidden rounded-[20px] sm:h-[380px] sm:rounded-[26px]">
                 <Image src={post.imageUrl} alt={post.title} fill sizes="(max-width: 768px) 100vw, 900px" className="object-cover" />
               </div>
             ) : null}
@@ -127,7 +127,7 @@ export function PostCard({
               </a>
             ) : null}
 
-            <div className="mt-5 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+            <div className="mt-5 flex flex-wrap items-center gap-2 text-[11px] text-slate-400 sm:text-xs">
               <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-2 text-emerald-100">
                 {getModeActionLabel(post.postMode)}
               </span>
@@ -207,13 +207,13 @@ export function PostCard({
               ) : null}
 
               {viewerId && viewerId !== post.authorId ? (
-                <form action={reportContentAction} className="inline-flex items-center gap-2">
+                <form action={reportContentAction} className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:inline-flex">
                   <input type="hidden" name="postId" value={post.id} />
                   <input type="hidden" name="postPageId" value={post.id} />
                   <input type="hidden" name="communitySlug" value={post.community.slug} />
                   <select
                     name="reason"
-                    className="rounded-full border border-white/10 bg-white/6 px-3 py-2 text-xs text-slate-300 outline-none"
+                    className="min-w-0 flex-1 rounded-full border border-white/10 bg-white/6 px-3 py-2 text-xs text-slate-300 outline-none sm:flex-none"
                     defaultValue="OTHER"
                   >
                     {reportReasons.map((reason) => (

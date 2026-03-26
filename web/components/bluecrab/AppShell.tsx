@@ -2,6 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Bell, Compass, Home, PlusSquare, Search, Settings, Shield, Sparkles, UserRound } from "lucide-react"
 import { logoutAction } from "@/app/actions"
+import BottomNav from "@/components/layout/BottomNav"
 import { formatCount, formatRelativeDate } from "@/lib/utils"
 
 export function AppShell({
@@ -25,10 +26,10 @@ export function AppShell({
   ].filter(Boolean) as Array<{ href: string; label: string; icon: typeof Home }>
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.14),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(14,165,233,0.18),_transparent_25%),linear-gradient(180deg,#06101c_0%,#071423_45%,#091728_100%)] text-white">
+    <div className="min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.14),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(14,165,233,0.18),_transparent_25%),linear-gradient(180deg,#06101c_0%,#071423_45%,#091728_100%)] text-white">
       <div className="sticky top-0 z-40 border-b border-white/10 bg-[#07111d]/90 backdrop-blur lg:hidden">
-        <div className="flex items-center justify-between px-4 py-3">
-          <Link href="/" className="flex items-center gap-3">
+        <div className="flex items-center justify-between gap-3 px-4 py-3">
+          <Link href="/" className="flex min-w-0 items-center gap-3">
             <Image
               src="/bluecrablogo.png"
               alt="BlueCrab"
@@ -37,18 +38,18 @@ export function AppShell({
               className="rounded-xl object-cover"
               unoptimized
             />
-            <span className="font-heading text-xl font-semibold">BlueCrab</span>
+            <span className="truncate font-heading text-lg font-semibold sm:text-xl">BlueCrab</span>
           </Link>
-          <div className="flex items-center gap-2 text-xs text-slate-300">
-            <Link href="/explore" className="rounded-full border border-white/10 px-3 py-1.5">
+          <div className="flex shrink-0 items-center gap-2 text-[11px] text-slate-300 sm:text-xs">
+            <Link href="/explore" className="rounded-full border border-white/10 px-2.5 py-1.5 sm:px-3">
               Explore
             </Link>
             {user ? (
-              <Link href={`/u/${user.username}`} className="rounded-full border border-white/10 px-3 py-1.5">
+              <Link href={`/u/${user.username}`} className="rounded-full border border-white/10 px-2.5 py-1.5 sm:px-3">
                 Profile
               </Link>
             ) : (
-              <Link href="/login" className="rounded-full border border-white/10 px-3 py-1.5">
+              <Link href="/login" className="rounded-full border border-white/10 px-2.5 py-1.5 sm:px-3">
                 Sign in
               </Link>
             )}
@@ -56,7 +57,7 @@ export function AppShell({
         </div>
       </div>
 
-      <div className="mx-auto grid min-h-screen max-w-[1600px] grid-cols-1 gap-6 px-4 py-4 lg:grid-cols-[270px_minmax(0,1fr)_320px] lg:px-6">
+      <div className="mx-auto grid min-h-screen max-w-[1600px] grid-cols-1 gap-4 px-3 py-3 pb-24 sm:gap-5 sm:px-4 sm:py-4 sm:pb-28 lg:grid-cols-[270px_minmax(0,1fr)_320px] lg:gap-6 lg:px-6 lg:pb-6">
         <aside className="hidden lg:flex lg:flex-col lg:gap-5">
           <Link href="/" className="rounded-[28px] border border-white/10 bg-white/5 px-5 py-4 backdrop-blur">
             <div className="flex items-center gap-3">
@@ -137,7 +138,7 @@ export function AppShell({
           </div>
         </aside>
 
-        <main className="pb-10">
+        <main className="min-w-0 pb-2 lg:pb-10">
           <div className="mb-5 hidden rounded-[28px] border border-white/10 bg-white/5 p-3 backdrop-blur lg:block">
             <form action="/search" className="flex items-center gap-3">
               <Search className="h-4 w-4 text-slate-400" />
@@ -224,6 +225,7 @@ export function AppShell({
           </section>
         </aside>
       </div>
+      <BottomNav />
     </div>
   )
 }

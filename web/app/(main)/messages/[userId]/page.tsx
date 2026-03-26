@@ -74,7 +74,7 @@ export default function ChatPage({ params }: { params: Promise<{ userId: string 
   if (loading) return <div className="flex justify-center py-16"><Spinner size="lg" /></div>
 
   return (
-    <div className="flex flex-col h-[calc(100vh-6rem)]">
+    <div className="flex min-h-[calc(100dvh-8.5rem)] flex-col">
       {/* Header */}
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 px-3 sm:px-5 py-3 sm:py-4 flex items-center gap-2 sm:gap-3 mb-4 shrink-0">
         <button onClick={() => router.back()} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 transition-colors active:scale-95">
@@ -91,7 +91,7 @@ export default function ChatPage({ params }: { params: Promise<{ userId: string 
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto space-y-3 px-2 sm:px-1 mb-4">
+      <div className="mb-4 flex-1 overflow-y-auto space-y-3 px-1 sm:px-1">
         {msgs.length === 0 && (
           <p className="text-center text-slate-400 py-8 text-sm">No messages yet. Send the first one!</p>
         )}
@@ -100,7 +100,7 @@ export default function ChatPage({ params }: { params: Promise<{ userId: string 
           return (
             <div key={m.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'} gap-2`}>
               {!isMine && <Avatar src={m.sender.avatar_url} username={m.sender.username} size={32} className="shrink-0 mt-auto" />}
-              <div className={`max-w-xs sm:max-w-sm px-3 sm:px-4 py-2.5 rounded-2xl text-sm ${
+              <div className={`max-w-[78vw] sm:max-w-sm px-3 sm:px-4 py-2.5 rounded-2xl text-sm ${
                 isMine
                   ? 'bg-blue-600 text-white rounded-br-sm'
                   : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-bl-sm'
@@ -117,7 +117,7 @@ export default function ChatPage({ params }: { params: Promise<{ userId: string 
       </div>
 
       {/* Input */}
-      <form onSubmit={send} className="flex gap-2 sm:gap-3 shrink-0">
+      <form onSubmit={send} className="sticky bottom-16 flex gap-2 bg-transparent pb-1 pt-1 sm:static sm:pb-0 sm:pt-0">
         <input
           value={content}
           onChange={e => setContent(e.target.value)}

@@ -23,7 +23,7 @@ export function AuthForm({
   return (
     <form action={formAction} className="space-y-4">
       <div className="space-y-1">
-        <h1 className="font-heading text-4xl font-semibold text-white">{title}</h1>
+        <h1 className="font-heading text-3xl font-semibold text-white sm:text-4xl">{title}</h1>
         <p className="text-sm text-slate-400">{description}</p>
       </div>
 

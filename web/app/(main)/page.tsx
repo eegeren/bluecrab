@@ -21,18 +21,18 @@ export default async function HomePage({
   ]
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4 sm:space-y-5">
       {user && feed.onboarding?.needsOnboarding ? (
         <OnboardingCard suggestedCommunities={feed.onboarding.suggestedCommunities} defaultInterests={feed.onboarding.interests} />
       ) : null}
 
-      <section className="rounded-[34px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] p-6 shadow-[0_24px_80px_rgba(4,10,20,0.35)]">
+      <section className="rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] p-4 shadow-[0_24px_80px_rgba(4,10,20,0.35)] sm:rounded-[34px] sm:p-6">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
             <div className="mb-3 inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs text-cyan-200">
               Structured builder community
             </div>
-            <h1 className="font-heading text-4xl font-semibold tracking-tight text-white">Ideas, feedback, and build-in-public loops for serious builders.</h1>
+            <h1 className="font-heading text-3xl font-semibold tracking-tight text-white sm:text-4xl">Ideas, feedback, and build-in-public loops for serious builders.</h1>
             <p className="mt-3 text-sm leading-7 text-slate-300">
               BlueCrab turns loose discussion into structured builder signal with templates, AI summaries, and reputation that means something.
             </p>
@@ -65,7 +65,7 @@ export default async function HomePage({
       </div>
 
       {feed.posts.length === 0 ? (
-        <div className="rounded-[30px] border border-dashed border-white/10 px-6 py-14 text-center text-slate-400">
+        <div className="rounded-[24px] border border-dashed border-white/10 px-4 py-12 text-center text-slate-400 sm:rounded-[30px] sm:px-6 sm:py-14">
           <div className="text-lg font-medium text-white">Your feed needs a few anchors.</div>
           <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-slate-400">
             Join active communities, save a few threads, or finish onboarding so BlueCrab can recover from the cold-start problem and show stronger discussions.

@@ -44,7 +44,7 @@ interface BottomNavProps {
 export default function BottomNav({ hidden = false }: BottomNavProps) {
   const pathname = usePathname()
   return (
-    <nav className={`md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-[#0a1628]/90 glass border-t border-blue-100 dark:border-[#162033] transition-opacity ${
+    <nav className={`lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-[#0a1628]/90 glass border-t border-blue-100 pb-[max(env(safe-area-inset-bottom),0px)] dark:border-[#162033] transition-opacity ${
       hidden ? 'opacity-0 pointer-events-none' : 'opacity-100'
     }`}>
       <div className="flex">
@@ -54,7 +54,7 @@ export default function BottomNav({ hidden = false }: BottomNavProps) {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex-1 flex flex-col items-center justify-center py-3 transition-colors ${
+              className={`flex-1 flex min-w-0 flex-col items-center justify-center py-3 text-[11px] transition-colors ${
                 active
                   ? 'text-blue-500 dark:text-blue-400'
                   : 'text-slate-400 dark:text-slate-500'

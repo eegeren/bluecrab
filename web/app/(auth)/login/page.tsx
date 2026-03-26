@@ -27,8 +27,8 @@ export default async function LoginPage() {
         </div>
       </div>
 
-      <div className="flex items-center justify-center px-6 py-12">
-        <div className="w-full max-w-md rounded-[32px] border border-white/10 bg-white/5 p-8 shadow-[0_24px_80px_rgba(4,10,20,0.45)] backdrop-blur">
+      <div className="flex items-center justify-center px-4 py-8 sm:px-6 sm:py-12">
+        <div className="w-full max-w-md rounded-[24px] border border-white/10 bg-white/5 p-5 shadow-[0_24px_80px_rgba(4,10,20,0.45)] backdrop-blur sm:rounded-[32px] sm:p-8">
           <AuthForm
             title="Sign in"
             description="Access your communities, picks, and conversation history."

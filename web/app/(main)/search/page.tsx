@@ -13,10 +13,10 @@ export default async function SearchPage({
   const results = q.trim() ? await getSearchResults(q.trim(), scope) : { communities: [], users: [], posts: [] }
 
   return (
-    <div className="space-y-5">
-      <section className="rounded-[34px] border border-white/10 bg-white/5 p-6">
+    <div className="space-y-4 sm:space-y-5">
+      <section className="rounded-[24px] border border-white/10 bg-white/5 p-4 sm:rounded-[34px] sm:p-6">
         <form className="space-y-4" action="/search">
-          <div className="font-heading text-4xl font-semibold text-white">Search</div>
+          <div className="font-heading text-3xl font-semibold text-white sm:text-4xl">Search</div>
           <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_220px]">
             <input
               name="q"
@@ -35,12 +35,12 @@ export default async function SearchPage({
       </section>
 
       {!q.trim() ? (
-        <div className="rounded-[30px] border border-dashed border-white/10 px-6 py-14 text-center text-slate-400">
+        <div className="rounded-[24px] border border-dashed border-white/10 px-4 py-12 text-center text-slate-400 sm:rounded-[30px] sm:px-6 sm:py-14">
           Start with a keyword, community slug, or username.
         </div>
       ) : (
         <>
-          <section className="rounded-[30px] border border-white/10 bg-white/5 p-5">
+          <section className="rounded-[24px] border border-white/10 bg-white/5 p-4 sm:rounded-[30px] sm:p-5">
             <div className="mb-4 font-heading text-2xl font-semibold text-white">Communities</div>
             <div className="grid gap-3 md:grid-cols-2">
               {results.communities.map((community: any) => (
@@ -54,7 +54,7 @@ export default async function SearchPage({
             </div>
           </section>
 
-          <section className="rounded-[30px] border border-white/10 bg-white/5 p-5">
+          <section className="rounded-[24px] border border-white/10 bg-white/5 p-4 sm:rounded-[30px] sm:p-5">
             <div className="mb-4 font-heading text-2xl font-semibold text-white">People</div>
             <div className="grid gap-3 md:grid-cols-2">
               {results.users.map((person: any) => (
@@ -70,7 +70,7 @@ export default async function SearchPage({
           <section className="space-y-4">
             <div className="font-heading text-2xl font-semibold text-white">Posts</div>
             {results.posts.length === 0 ? (
-              <div className="rounded-[30px] border border-dashed border-white/10 px-6 py-14 text-center text-slate-400">
+              <div className="rounded-[24px] border border-dashed border-white/10 px-4 py-12 text-center text-slate-400 sm:rounded-[30px] sm:px-6 sm:py-14">
                 No posts matched this search.
               </div>
             ) : (

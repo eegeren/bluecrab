@@ -18,11 +18,11 @@ export function OnboardingCard({
   const [state, formAction] = useActionState<ActionState, FormData>(completeOnboardingAction, undefined)
 
   return (
-    <section className="rounded-[34px] border border-cyan-400/15 bg-[linear-gradient(180deg,rgba(34,211,238,0.1),rgba(255,255,255,0.04))] p-6 shadow-[0_24px_80px_rgba(4,10,20,0.3)]">
+    <section className="rounded-[24px] border border-cyan-400/15 bg-[linear-gradient(180deg,rgba(34,211,238,0.1),rgba(255,255,255,0.04))] p-4 shadow-[0_24px_80px_rgba(4,10,20,0.3)] sm:rounded-[34px] sm:p-6">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-2xl">
           <div className="mb-2 text-xs uppercase tracking-[0.24em] text-cyan-200">Activation</div>
-          <h2 className="font-heading text-2xl font-semibold text-white">Shape your feed before it goes flat.</h2>
+          <h2 className="font-heading text-xl font-semibold text-white sm:text-2xl">Shape your feed before it goes flat.</h2>
           <p className="mt-3 text-sm leading-7 text-slate-300">
             Pick a few interests, join active communities, and BlueCrab will bias your home feed toward high-signal threads instead of generic volume.
           </p>

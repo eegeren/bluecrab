@@ -248,7 +248,7 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
   return (
     <>
       <div className="space-y-4">
-        <section className="relative overflow-hidden rounded-[28px] border border-white/30 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-[0_25px_60px_-35px_rgba(15,23,42,0.9)]">
+        <section className="relative overflow-hidden rounded-[22px] border border-white/30 bg-white shadow-[0_25px_60px_-35px_rgba(15,23,42,0.9)] dark:border-slate-800 dark:bg-slate-950 sm:rounded-[28px]">
           <div className="absolute inset-0">
             {profile.cover_url ? (
               <div className="absolute inset-0 bg-cover bg-center opacity-70" style={coverStyles} />
@@ -259,13 +259,13 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
             <div className="absolute inset-x-0 top-0 h-32 opacity-60 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.6),transparent_65%)] blur-3xl" />
           </div>
 
-          <div className="relative p-5 sm:p-6 lg:p-8 space-y-6">
+          <div className="relative space-y-5 p-4 sm:p-6 lg:p-8">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-              <div className="flex items-start gap-4 min-w-0">
+              <div className="flex min-w-0 flex-col items-start gap-4 sm:flex-row">
                 <div className="relative shrink-0">
                   <div className="absolute inset-0 blur-2xl bg-blue-500/50 dark:bg-blue-700/50" />
-                  <div className="relative rounded-[32px] bg-white/90 dark:bg-slate-900/80 p-1 ring-1 ring-white/70 dark:ring-slate-800 shadow-2xl">
-                    <Avatar src={profile.avatar_url} username={profile.username} size={110} />
+                  <div className="relative rounded-[24px] bg-white/90 p-1 ring-1 ring-white/70 shadow-2xl dark:bg-slate-900/80 dark:ring-slate-800 sm:rounded-[32px]">
+                    <Avatar src={profile.avatar_url} username={profile.username} size={96} />
                   </div>
                 </div>
                 <div className="min-w-0 text-slate-900 dark:text-slate-100">
@@ -275,7 +275,7 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
                     </span>
                     <p className="text-[13px] uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">Member Since {new Date(profile.created_at ?? Date.now()).getFullYear()}</p>
                   </div>
-                  <h1 className="mt-1 text-3xl font-black tracking-tight text-slate-900 dark:text-white truncate">
+                  <h1 className="mt-1 truncate text-2xl font-black tracking-tight text-slate-900 dark:text-white sm:text-3xl">
                     {profile.username}
                   </h1>
                   <p className="text-sm font-medium text-slate-500 dark:text-slate-400">@{profileHandle}</p>
@@ -299,12 +299,12 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2 md:justify-end">
+              <div className="flex w-full flex-wrap items-center gap-2 md:justify-end lg:w-auto">
                 {isOwn ? (
                   <button
                     aria-label="Edit profile"
                     onClick={openEdit}
-                    className="inline-flex items-center gap-2 rounded-2xl border border-slate-200/60 bg-white/60 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm backdrop-blur hover:bg-white hover:border-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-100"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200/60 bg-white/60 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm backdrop-blur hover:border-slate-300 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-100 sm:w-auto"
                   >
                     <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                       <path d="M3 14.25V17h2.75L14.81 7.94l-2.75-2.75L3 14.25Zm12.71-7.04a.996.996 0 0 0 0-1.41l-1.5-1.5a.996.996 0 1 0-1.41 1.41l1.5 1.5c.39.39 1.02.39 1.41 0Z" />
@@ -317,7 +317,7 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
                       aria-label="Friend action"
                       onClick={handleFriendAction}
                       disabled={friendship === 'friends' || friendship === 'pending_outgoing'}
-                      className={`inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${
+                      className={`inline-flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 sm:w-auto ${
                         friendship === 'friends'
                           ? 'bg-emerald-500/90 hover:bg-emerald-500 disabled:opacity-80'
                           : friendship === 'pending_outgoing'
@@ -342,7 +342,7 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
                     />
                     <Link
                       href={`/messages/${profile.id}`}
-                      className="inline-flex items-center gap-2 rounded-2xl border border-white/60 bg-white/50 px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm backdrop-blur transition hover:border-white hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-200"
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-white/60 bg-white/50 px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm backdrop-blur transition hover:border-white hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-200 sm:w-auto"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
