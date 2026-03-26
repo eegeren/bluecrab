@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: bluecrab-web
+    runtime: node
+    plan: starter
+    autoDeploy: true
+    rootDir: web
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+  
+  - type: web
+    name: bluecrab-api
+    runtime: go
+    plan: starter
+    autoDeploy: true
+    buildCommand: go build -o bin/api ./cmd/api
+    startCommand: ./bin/api
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: AUTO_MIGRATE
+        value: "true"
+      - key: MIGRATIONS_DIR
+        value: migrations
