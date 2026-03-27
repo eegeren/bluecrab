@@ -88,3 +88,52 @@ func (s *Service) DeletePost(ctx context.Context, postID, userID string) error {
 	}
 	return nil
 }
+
+func (s *Service) ListPosts(ctx context.Context, viewerID string, limit, offset int) ([]models.Post, error) {
+	rows, err := s.pool.Query(ctx, `
+		SELECT p.id::text,
+		       COALESCE(p.content, ''),
+		       COALESCE(p.image_url, ''),
+		       p.created_at,
+		       p.user_id::text,
+		       u.username,
+		       COALESCE(u.avatar_url, ''),
+		       COALESCE(lc.cnt, 0),
+		       COALESCE(cc.cnt, 0),
+		       COALESCE(ml.liked, false),
+		       COALESCE(mb.bookmarked, false)
+		FROM posts p
+		JOIN users u ON u.id = p.user_id
+		LEFT JOIN (SELECT post_id, COUNT(*) cnt FROM likes GROUP BY post_id) lc ON lc.post_id = p.id
+		LEFT JOIN (SELECT post_id, COUNT(*) cnt FROM comments GROUP BY post_id) cc ON cc.post_id = p.id
+		LEFT JOIN (SELECT post_id, true liked FROM likes WHERE user_id = NULLIF($1,'')::uuid) ml ON ml.post_id = p.id
+		LEFT JOIN (SELECT post_id, true bookmarked FROM bookmarks WHERE user_id = NULLIF($1,'')::uuid) mb ON mb.post_id = p.id
+		ORDER BY p.created_at DESC
+		LIMIT $2 OFFSET $3
+	`, viewerID, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	posts := make([]models.Post, 0)
+	for rows.Next() {
+		var p models.Post
+		if err := rows.Scan(
+			&p.ID, &p.Content, &p.ImageURL, &p.CreatedAt, &p.UserID,
+			&p.Author.Username, &p.Author.AvatarURL,
+			&p.LikeCount, &p.CommentCount, &p.IsLiked, &p.IsBookmarked,
+		); err != nil {
+			return nil, err
+		}
+		p.Author.ID = p.UserID
+		p.AuthorID = p.UserID
+		posts = append(posts, p)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return posts, nil
+}

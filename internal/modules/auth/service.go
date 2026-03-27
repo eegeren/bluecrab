@@ -3,6 +3,8 @@ package auth
 import (
 	"context"
 	"errors"
+	"fmt"
+	"regexp"
 	"strings"
 	"time"
 
@@ -56,6 +58,7 @@ type MeResponse struct {
 }
 
 type AuthResponse struct {
+	Success bool       `json:"success"`
 	Token string     `json:"token"`
 	User  MeResponse `json:"user"`
 }
@@ -65,11 +68,14 @@ type AuthResponse struct {
 func (s *Service) Register(ctx context.Context, in RegisterInput) (*AuthResponse, error) {
 	in.Username = strings.TrimSpace(in.Username)
 	in.Email = strings.ToLower(strings.TrimSpace(in.Email))
+	if in.Username == "" {
+		in.Username = usernameFromEmail(in.Email)
+	}
 
 	switch {
-	case in.Username == "" || in.Email == "" || in.Password == "":
+	case in.Email == "" || in.Password == "":
 		s.logAuthEvent(ctx, "", in.Email, "register", false, in.IPAddress, in.UserAgent, "missing required fields")
-		return nil, errors.New("username, email and password are required")
+		return nil, errors.New("email and password are required")
 	case len(in.Username) < 3:
 		s.logAuthEvent(ctx, "", in.Email, "register", false, in.IPAddress, in.UserAgent, "username too short")
 		return nil, errors.New("username must be at least 3 characters")
@@ -81,6 +87,12 @@ func (s *Service) Register(ctx context.Context, in RegisterInput) (*AuthResponse
 	hash, err := util.HashPassword(in.Password)
 	if err != nil {
 		return nil, err
+	}
+
+	var exists bool
+	if err := s.pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)`, in.Email).Scan(&exists); err == nil && exists {
+		s.logAuthEvent(ctx, "", in.Email, "register", false, in.IPAddress, in.UserAgent, "email already taken")
+		return nil, errors.New("email already taken")
 	}
 
 	var user MeResponse
@@ -108,7 +120,7 @@ func (s *Service) Register(ctx context.Context, in RegisterInput) (*AuthResponse
 	if err != nil {
 		return nil, err
 	}
-	return &AuthResponse{Token: token, User: user}, nil
+	return &AuthResponse{Success: true, Token: token, User: user}, nil
 }
 
 func (s *Service) Login(ctx context.Context, in LoginInput) (*AuthResponse, error) {
@@ -147,7 +159,7 @@ func (s *Service) Login(ctx context.Context, in LoginInput) (*AuthResponse, erro
 	if err != nil {
 		return nil, err
 	}
-	return &AuthResponse{Token: token, User: user}, nil
+	return &AuthResponse{Success: true, Token: token, User: user}, nil
 }
 
 func (s *Service) GetMe(ctx context.Context, userID string) (*MeResponse, error) {
@@ -163,6 +175,26 @@ func (s *Service) GetMe(ctx context.Context, userID string) (*MeResponse, error)
 		return nil, errors.New("user not found")
 	}
 	return &user, err
+}
+
+var usernameSanitizer = regexp.MustCompile(`[^a-z0-9_]+`)
+
+func usernameFromEmail(email string) string {
+	base := strings.ToLower(strings.TrimSpace(email))
+	if idx := strings.Index(base, "@"); idx > 0 {
+		base = base[:idx]
+	}
+
+	base = usernameSanitizer.ReplaceAllString(base, "_")
+	base = strings.Trim(base, "_")
+	if len(base) < 3 {
+		base = "user"
+	}
+	if len(base) > 20 {
+		base = base[:20]
+	}
+
+	return fmt.Sprintf("%s_%d", base, time.Now().Unix()%100000)
 }
 
 func (s *Service) generateToken(userID string) (string, error) {

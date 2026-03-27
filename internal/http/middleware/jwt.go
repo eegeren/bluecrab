@@ -37,11 +37,11 @@ func UserID(c *fiber.Ctx) string {
 }
 
 func parseToken(c *fiber.Ctx, secret string) (string, error) {
-	header := c.Get("Authorization")
-	if !strings.HasPrefix(header, "Bearer ") {
+	tokenStr := tokenFromRequest(c)
+	if tokenStr == "" {
 		return "", errors.New("missing token")
 	}
-	tokenStr := strings.TrimPrefix(header, "Bearer ")
+
 	token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("unexpected signing method")
@@ -60,4 +60,17 @@ func parseToken(c *fiber.Ctx, secret string) (string, error) {
 		return "", errors.New("empty user_id")
 	}
 	return userID, nil
+}
+
+func tokenFromRequest(c *fiber.Ctx) string {
+	header := c.Get("Authorization")
+	if strings.HasPrefix(header, "Bearer ") {
+		return strings.TrimPrefix(header, "Bearer ")
+	}
+
+	if cookie := strings.TrimSpace(c.Cookies("token")); cookie != "" {
+		return cookie
+	}
+
+	return ""
 }

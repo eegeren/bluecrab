@@ -73,5 +73,10 @@ func NewServer(cfg config.Config, pool *pgxpool.Pool) *fiber.App {
 	search.RegisterRoutes(api, pool, cfg.JWTSecret)
 	bookmarks.RegisterRoutes(api, pool, cfg.JWTSecret)
 
+	// Public aliases for the web frontend, which calls the Railway backend
+	// directly without the legacy /api prefix.
+	auth.RegisterRoutes(app, pool, cfg.JWTSecret)
+	posts.RegisterRoutes(app, pool, cfg.JWTSecret)
+
 	return app
 }
