@@ -43,8 +43,17 @@ func NewServer(cfg config.Config, pool *pgxpool.Pool) *fiber.App {
 		AllowMethods: "GET, POST, PUT, DELETE, OPTIONS",
 	}))
 
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{
+			"status":  "ok",
+			"service": "bluecrab-api",
+		})
+	})
+
 	app.Get("/healthz", func(c *fiber.Ctx) error {
-		return c.JSON(fiber.Map{"status": "ok"})
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"ok": true,
+		})
 	})
 
 	api := app.Group("/api")

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"os"
 	"strings"
 
 	"circlex/internal/config"
@@ -32,6 +33,11 @@ func main() {
 		}
 	}
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+	}
+
 	app := circhttp.NewServer(cfg, pool)
-	log.Fatal(app.Listen(":" + cfg.Port))
+	log.Fatal(app.Listen(":" + port))
 }
