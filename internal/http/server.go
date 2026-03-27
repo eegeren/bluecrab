@@ -38,9 +38,10 @@ func NewServer(cfg config.Config, pool *pgxpool.Pool) *fiber.App {
 	app.Use(recover.New())
 	app.Use(logger.New())
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "*",
+		AllowOrigins: "https://bluecrab.vercel.app,http://localhost:3000",
 		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
 		AllowMethods: "GET, POST, PUT, DELETE, OPTIONS",
+		AllowCredentials: true,
 	}))
 
 	app.Get("/", func(c *fiber.Ctx) error {
