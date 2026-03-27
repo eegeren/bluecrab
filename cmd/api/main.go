@@ -27,6 +27,10 @@ func main() {
 	}
 	defer pool.Close()
 
+	if err := db.EnsureAuthUserFields(context.Background(), pool); err != nil {
+		log.Fatalf("startup migration failed: %v", err)
+	}
+
 	if cfg.AutoMigrate {
 		if err := db.RunMigrations(context.Background(), pool, cfg.MigrationsDir); err != nil {
 			log.Fatalf("migration failed: %v", err)

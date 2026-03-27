@@ -3,8 +3,6 @@ package auth
 import (
 	"context"
 	"errors"
-	"fmt"
-	"regexp"
 	"strings"
 	"time"
 
@@ -28,15 +26,18 @@ func NewService(pool *pgxpool.Pool, jwtSecret string) *Service {
 // ---- request / response types ----
 
 type RegisterInput struct {
-	Username  string `json:"username"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	IPAddress string `json:"-"`
-	UserAgent string `json:"-"`
+	FirstName   string `json:"firstName"`
+	LastName    string `json:"lastName"`
+	Username    string `json:"username"`
+	Email       string `json:"email"`
+	PhoneNumber string `json:"phoneNumber"`
+	Password    string `json:"password"`
+	IPAddress   string `json:"-"`
+	UserAgent   string `json:"-"`
 }
 
 type LoginInput struct {
-	Email     string `json:"email"`
+	Username  string `json:"username"`
 	Password  string `json:"password"`
 	IPAddress string `json:"-"`
 	UserAgent string `json:"-"`
@@ -44,6 +45,8 @@ type LoginInput struct {
 
 type MeResponse struct {
 	ID           string `json:"id"`
+	FirstName    string `json:"first_name"`
+	LastName     string `json:"last_name"`
 	Username     string `json:"username"`
 	Email        string `json:"email"`
 	Bio          string `json:"bio"`
@@ -59,23 +62,23 @@ type MeResponse struct {
 
 type AuthResponse struct {
 	Success bool       `json:"success"`
-	Token string     `json:"token"`
-	User  MeResponse `json:"user"`
+	Token   string     `json:"token"`
+	User    MeResponse `json:"user"`
 }
 
 // ---- service methods ----
 
 func (s *Service) Register(ctx context.Context, in RegisterInput) (*AuthResponse, error) {
+	in.FirstName = strings.TrimSpace(in.FirstName)
+	in.LastName = strings.TrimSpace(in.LastName)
 	in.Username = strings.TrimSpace(in.Username)
 	in.Email = strings.ToLower(strings.TrimSpace(in.Email))
-	if in.Username == "" {
-		in.Username = usernameFromEmail(in.Email)
-	}
+	in.PhoneNumber = strings.TrimSpace(in.PhoneNumber)
 
 	switch {
-	case in.Email == "" || in.Password == "":
+	case in.FirstName == "" || in.LastName == "" || in.Username == "" || in.Email == "" || in.Password == "":
 		s.logAuthEvent(ctx, "", in.Email, "register", false, in.IPAddress, in.UserAgent, "missing required fields")
-		return nil, errors.New("email and password are required")
+		return nil, errors.New("first name, last name, username, email and password are required")
 	case len(in.Username) < 3:
 		s.logAuthEvent(ctx, "", in.Email, "register", false, in.IPAddress, in.UserAgent, "username too short")
 		return nil, errors.New("username must be at least 3 characters")
@@ -94,15 +97,32 @@ func (s *Service) Register(ctx context.Context, in RegisterInput) (*AuthResponse
 		s.logAuthEvent(ctx, "", in.Email, "register", false, in.IPAddress, in.UserAgent, "email already taken")
 		return nil, errors.New("email already taken")
 	}
+	if err := s.pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM users WHERE username = $1)`, in.Username).Scan(&exists); err == nil && exists {
+		s.logAuthEvent(ctx, "", in.Email, "register", false, in.IPAddress, in.UserAgent, "username already taken")
+		return nil, errors.New("username already taken")
+	}
 
 	var user MeResponse
 	err = s.pool.QueryRow(ctx,
-		`INSERT INTO users (username, email, password_hash)
-		 VALUES ($1, $2, $3)
-		 RETURNING id::text, username, email, bio, avatar_url, cover_url, phone_number, website_url, instagram_url, twitter_url, linkedin_url, github_url`,
-		in.Username, in.Email, hash,
+		`INSERT INTO users (first_name, last_name, username, email, phone_number, password_hash)
+		 VALUES ($1, $2, $3, $4, $5, $6)
+		 RETURNING id::text,
+		           COALESCE(first_name, ''),
+		           COALESCE(last_name, ''),
+		           COALESCE(username, ''),
+		           email,
+		           COALESCE(bio, ''),
+		           COALESCE(avatar_url, ''),
+		           COALESCE(cover_url, ''),
+		           COALESCE(phone_number, ''),
+		           COALESCE(website_url, ''),
+		           COALESCE(instagram_url, ''),
+		           COALESCE(twitter_url, ''),
+		           COALESCE(linkedin_url, ''),
+		           COALESCE(github_url, '')`,
+		in.FirstName, in.LastName, in.Username, in.Email, in.PhoneNumber, hash,
 	).Scan(
-		&user.ID, &user.Username, &user.Email, &user.Bio, &user.AvatarURL, &user.CoverURL, &user.PhoneNumber,
+		&user.ID, &user.FirstName, &user.LastName, &user.Username, &user.Email, &user.Bio, &user.AvatarURL, &user.CoverURL, &user.PhoneNumber,
 		&user.WebsiteURL, &user.InstagramURL, &user.TwitterURL, &user.LinkedInURL, &user.GitHubURL,
 	)
 	if err != nil {
@@ -124,32 +144,46 @@ func (s *Service) Register(ctx context.Context, in RegisterInput) (*AuthResponse
 }
 
 func (s *Service) Login(ctx context.Context, in LoginInput) (*AuthResponse, error) {
-	in.Email = strings.ToLower(strings.TrimSpace(in.Email))
-	if in.Email == "" || in.Password == "" {
-		s.logAuthEvent(ctx, "", in.Email, "login", false, in.IPAddress, in.UserAgent, "missing required fields")
-		return nil, errors.New("email and password are required")
+	in.Username = strings.TrimSpace(in.Username)
+	if in.Username == "" || in.Password == "" {
+		s.logAuthEvent(ctx, "", "", "login", false, in.IPAddress, in.UserAgent, "missing required fields")
+		return nil, errors.New("username and password are required")
 	}
 
 	var user MeResponse
 	var hash string
 	err := s.pool.QueryRow(ctx,
-		`SELECT id::text, username, email, bio, avatar_url, cover_url, phone_number, website_url, instagram_url, twitter_url, linkedin_url, github_url, password_hash
-		 FROM users WHERE email = $1`,
-		in.Email,
+		`SELECT id::text,
+		        COALESCE(first_name, ''),
+		        COALESCE(last_name, ''),
+		        COALESCE(username, ''),
+		        email,
+		        COALESCE(bio, ''),
+		        COALESCE(avatar_url, ''),
+		        COALESCE(cover_url, ''),
+		        COALESCE(phone_number, ''),
+		        COALESCE(website_url, ''),
+		        COALESCE(instagram_url, ''),
+		        COALESCE(twitter_url, ''),
+		        COALESCE(linkedin_url, ''),
+		        COALESCE(github_url, ''),
+		        password_hash
+		 FROM users WHERE username = $1`,
+		in.Username,
 	).Scan(
-		&user.ID, &user.Username, &user.Email, &user.Bio, &user.AvatarURL, &user.CoverURL, &user.PhoneNumber,
+		&user.ID, &user.FirstName, &user.LastName, &user.Username, &user.Email, &user.Bio, &user.AvatarURL, &user.CoverURL, &user.PhoneNumber,
 		&user.WebsiteURL, &user.InstagramURL, &user.TwitterURL, &user.LinkedInURL, &user.GitHubURL, &hash,
 	)
 	if errors.Is(err, pgx.ErrNoRows) {
-		s.logAuthEvent(ctx, "", in.Email, "login", false, in.IPAddress, in.UserAgent, "invalid credentials")
+		s.logAuthEvent(ctx, "", "", "login", false, in.IPAddress, in.UserAgent, "invalid credentials")
 		return nil, errors.New("invalid credentials")
 	}
 	if err != nil {
-		s.logAuthEvent(ctx, "", in.Email, "login", false, in.IPAddress, in.UserAgent, "database error")
+		s.logAuthEvent(ctx, "", "", "login", false, in.IPAddress, in.UserAgent, "database error")
 		return nil, err
 	}
 	if !util.CheckPassword(hash, in.Password) {
-		s.logAuthEvent(ctx, user.ID, in.Email, "login", false, in.IPAddress, in.UserAgent, "invalid credentials")
+		s.logAuthEvent(ctx, user.ID, user.Email, "login", false, in.IPAddress, in.UserAgent, "invalid credentials")
 		return nil, errors.New("invalid credentials")
 	}
 	_, _ = s.pool.Exec(ctx, `UPDATE users SET last_login_at = now(), updated_at = now() WHERE id = $1::uuid`, user.ID)
@@ -165,36 +199,31 @@ func (s *Service) Login(ctx context.Context, in LoginInput) (*AuthResponse, erro
 func (s *Service) GetMe(ctx context.Context, userID string) (*MeResponse, error) {
 	var user MeResponse
 	err := s.pool.QueryRow(ctx,
-		`SELECT id::text, username, email, bio, avatar_url, cover_url, phone_number, website_url, instagram_url, twitter_url, linkedin_url, github_url FROM users WHERE id = $1::uuid`,
+		`SELECT id::text,
+		        COALESCE(first_name, ''),
+		        COALESCE(last_name, ''),
+		        COALESCE(username, ''),
+		        email,
+		        COALESCE(bio, ''),
+		        COALESCE(avatar_url, ''),
+		        COALESCE(cover_url, ''),
+		        COALESCE(phone_number, ''),
+		        COALESCE(website_url, ''),
+		        COALESCE(instagram_url, ''),
+		        COALESCE(twitter_url, ''),
+		        COALESCE(linkedin_url, ''),
+		        COALESCE(github_url, '')
+		   FROM users
+		  WHERE id = $1::uuid`,
 		userID,
 	).Scan(
-		&user.ID, &user.Username, &user.Email, &user.Bio, &user.AvatarURL, &user.CoverURL, &user.PhoneNumber,
+		&user.ID, &user.FirstName, &user.LastName, &user.Username, &user.Email, &user.Bio, &user.AvatarURL, &user.CoverURL, &user.PhoneNumber,
 		&user.WebsiteURL, &user.InstagramURL, &user.TwitterURL, &user.LinkedInURL, &user.GitHubURL,
 	)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, errors.New("user not found")
 	}
 	return &user, err
-}
-
-var usernameSanitizer = regexp.MustCompile(`[^a-z0-9_]+`)
-
-func usernameFromEmail(email string) string {
-	base := strings.ToLower(strings.TrimSpace(email))
-	if idx := strings.Index(base, "@"); idx > 0 {
-		base = base[:idx]
-	}
-
-	base = usernameSanitizer.ReplaceAllString(base, "_")
-	base = strings.Trim(base, "_")
-	if len(base) < 3 {
-		base = "user"
-	}
-	if len(base) > 20 {
-		base = base[:20]
-	}
-
-	return fmt.Sprintf("%s_%d", base, time.Now().Unix()%100000)
 }
 
 func (s *Service) generateToken(userID string) (string, error) {

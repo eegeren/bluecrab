@@ -15,6 +15,8 @@ type Service struct{ pool *pgxpool.Pool }
 func NewService(pool *pgxpool.Pool) *Service { return &Service{pool: pool} }
 
 type UpdateProfileInput struct {
+	FirstName    string `json:"first_name"`
+	LastName     string `json:"last_name"`
 	Username     string `json:"username"`
 	Bio          string `json:"bio"`
 	AvatarURL    string `json:"avatar_url"`
@@ -36,7 +38,21 @@ type FriendshipStatus struct {
 func (s *Service) GetProfile(ctx context.Context, profileID, viewerID string) (*models.UserProfile, error) {
 	var p models.UserProfile
 	err := s.pool.QueryRow(ctx, `
-		SELECT u.id::text, u.username, u.email, u.bio, u.avatar_url, u.cover_url, u.phone_number, u.website_url, u.instagram_url, u.twitter_url, u.linkedin_url, u.github_url, u.created_at,
+		SELECT u.id::text,
+		       COALESCE(u.first_name, ''),
+		       COALESCE(u.last_name, ''),
+		       COALESCE(u.username, ''),
+		       u.email,
+		       COALESCE(u.bio, ''),
+		       COALESCE(u.avatar_url, ''),
+		       COALESCE(u.cover_url, ''),
+		       COALESCE(u.phone_number, ''),
+		       COALESCE(u.website_url, ''),
+		       COALESCE(u.instagram_url, ''),
+		       COALESCE(u.twitter_url, ''),
+		       COALESCE(u.linkedin_url, ''),
+		       COALESCE(u.github_url, ''),
+		       u.created_at,
 		       COALESCE(fc.cnt, 0),
 		       COALESCE(fg.cnt, 0),
 		       EXISTS(
@@ -50,7 +66,7 @@ func (s *Service) GetProfile(ctx context.Context, profileID, viewerID string) (*
 		       ON fg.follower_id = u.id
 		WHERE u.id = $1::uuid`,
 		profileID, viewerID,
-	).Scan(&p.ID, &p.Username, &p.Email, &p.Bio, &p.AvatarURL, &p.CoverURL, &p.PhoneNumber, &p.WebsiteURL, &p.InstagramURL, &p.TwitterURL, &p.LinkedInURL, &p.GitHubURL, &p.CreatedAt,
+	).Scan(&p.ID, &p.FirstName, &p.LastName, &p.Username, &p.Email, &p.Bio, &p.AvatarURL, &p.CoverURL, &p.PhoneNumber, &p.WebsiteURL, &p.InstagramURL, &p.TwitterURL, &p.LinkedInURL, &p.GitHubURL, &p.CreatedAt,
 		&p.FollowerCount, &p.FollowingCount, &p.IsFollowing)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, errors.New("user not found")
@@ -63,20 +79,36 @@ func (s *Service) UpdateProfile(ctx context.Context, userID string, in UpdatePro
 	var p models.UserProfile
 	err := s.pool.QueryRow(ctx,
 		`UPDATE users SET
-		   username = CASE WHEN NULLIF($1,'') IS NULL THEN username ELSE $1 END,
-		   bio = $2,
-		   avatar_url = $3,
-		   cover_url = $4,
-		   phone_number = $5,
-		   website_url = $6,
-		   instagram_url = $7,
-		   twitter_url = $8,
-		   linkedin_url = $9,
-		   github_url = $10
-		 WHERE id = $11::uuid
-		 RETURNING id::text, username, email, bio, avatar_url, cover_url, phone_number, website_url, instagram_url, twitter_url, linkedin_url, github_url, created_at`,
-		in.Username, in.Bio, in.AvatarURL, in.CoverURL, in.PhoneNumber, in.WebsiteURL, in.InstagramURL, in.TwitterURL, in.LinkedInURL, in.GitHubURL, userID,
-	).Scan(&p.ID, &p.Username, &p.Email, &p.Bio, &p.AvatarURL, &p.CoverURL, &p.PhoneNumber, &p.WebsiteURL, &p.InstagramURL, &p.TwitterURL, &p.LinkedInURL, &p.GitHubURL, &p.CreatedAt)
+		   first_name = $1,
+		   last_name = $2,
+		   username = CASE WHEN NULLIF($3,'') IS NULL THEN username ELSE $3 END,
+		   bio = $4,
+		   avatar_url = $5,
+		   cover_url = $6,
+		   phone_number = $7,
+		   website_url = $8,
+		   instagram_url = $9,
+		   twitter_url = $10,
+		   linkedin_url = $11,
+		   github_url = $12
+		 WHERE id = $13::uuid
+		 RETURNING id::text,
+		           COALESCE(first_name, ''),
+		           COALESCE(last_name, ''),
+		           COALESCE(username, ''),
+		           email,
+		           COALESCE(bio, ''),
+		           COALESCE(avatar_url, ''),
+		           COALESCE(cover_url, ''),
+		           COALESCE(phone_number, ''),
+		           COALESCE(website_url, ''),
+		           COALESCE(instagram_url, ''),
+		           COALESCE(twitter_url, ''),
+		           COALESCE(linkedin_url, ''),
+		           COALESCE(github_url, ''),
+		           created_at`,
+		in.FirstName, in.LastName, in.Username, in.Bio, in.AvatarURL, in.CoverURL, in.PhoneNumber, in.WebsiteURL, in.InstagramURL, in.TwitterURL, in.LinkedInURL, in.GitHubURL, userID,
+	).Scan(&p.ID, &p.FirstName, &p.LastName, &p.Username, &p.Email, &p.Bio, &p.AvatarURL, &p.CoverURL, &p.PhoneNumber, &p.WebsiteURL, &p.InstagramURL, &p.TwitterURL, &p.LinkedInURL, &p.GitHubURL, &p.CreatedAt)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, errors.New("user not found")
 	}
