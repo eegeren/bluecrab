@@ -89,7 +89,7 @@ export default async function PostPage({
               No comments yet. Start the thread.
             </div>
           ) : (
-            data.comments.map((comment) => (
+            data.comments.map((comment: any) => (
               <CommentThread
                 key={comment.id}
                 comment={comment}

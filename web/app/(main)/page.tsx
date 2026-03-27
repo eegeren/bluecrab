@@ -81,7 +81,7 @@ export default async function HomePage({
         </div>
       ) : (
         <div className="space-y-4">
-          {feed.posts.map((post) => (
+          {feed.posts.map((post: any) => (
             <PostCard key={post.id} post={post} viewerId={user?.id} compact />
           ))}
           {feed.hasMore ? (

@@ -65,7 +65,7 @@ export default async function ProfilePage({
               {data.user.reputationEntries.length === 0 ? (
                 <div className="rounded-2xl border border-dashed border-white/10 px-4 py-5 text-sm text-slate-500">No reputation categories yet.</div>
               ) : (
-                data.user.reputationEntries.map((entry) => (
+                data.user.reputationEntries.map((entry: any) => (
                   <div key={entry.id} className="rounded-full border border-white/10 bg-black/20 px-4 py-2 text-sm text-slate-200">
                     {entry.category.toLowerCase().replaceAll("_", " ")} · {entry.score}
                   </div>
@@ -86,7 +86,7 @@ export default async function ProfilePage({
               {data.user.projects.length === 0 ? (
                 <div className="rounded-[30px] border border-dashed border-white/10 px-6 py-12 text-center text-slate-400">No active projects yet.</div>
               ) : (
-                data.user.projects.map((project) => (
+                data.user.projects.map((project: any) => (
                   <div key={project.id} className="rounded-[30px] border border-white/10 bg-black/20 p-5">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div>
@@ -99,7 +99,7 @@ export default async function ProfilePage({
                     </div>
                     <p className="mt-3 text-sm leading-7 text-slate-300">{project.description}</p>
                     <div className="mt-4 space-y-3">
-                      {project.updates.map((update) => (
+                      {project.updates.map((update: any) => (
                         <div key={update.id} className="rounded-3xl border border-white/8 bg-white/5 p-4">
                           <div className="text-sm font-medium text-white">{update.title}</div>
                           <div className="mt-2 text-sm leading-7 text-slate-300">{update.content}</div>
@@ -120,14 +120,14 @@ export default async function ProfilePage({
                 No posts yet.
               </div>
             ) : (
-              data.user.posts.map((post) => <PostCard key={post.id} post={post} viewerId={viewer?.id} compact />)
+              data.user.posts.map((post: any) => <PostCard key={post.id} post={post} viewerId={viewer?.id} compact />)
             )}
           </section>
 
           <section className="rounded-[34px] border border-white/10 bg-white/5 p-6">
             <div className="font-heading text-2xl font-semibold text-white">Recent comments</div>
             <div className="mt-4 space-y-3">
-              {data.user.comments.map((comment) => (
+              {data.user.comments.map((comment: any) => (
                 <Link key={comment.id} href={`/post/${comment.postId}`} className="block rounded-3xl border border-white/8 bg-black/20 p-4 transition hover:border-cyan-400/20">
                   <div className="text-xs text-slate-400">
                     c/{comment.post.community.slug} · {formatRelativeDate(comment.createdAt)}
@@ -143,7 +143,7 @@ export default async function ProfilePage({
           <section className="rounded-[30px] border border-white/10 bg-white/5 p-5">
             <div className="font-heading text-xl font-semibold text-white">Community footprint</div>
             <div className="mt-4 space-y-3">
-              {data.user.memberships.map((membership) => (
+              {data.user.memberships.map((membership: any) => (
                 <Link key={membership.id} href={`/c/${membership.community.slug}`} className="block rounded-2xl border border-white/8 bg-black/20 px-4 py-3 text-sm text-slate-300">
                   {membership.community.name}
                 </Link>

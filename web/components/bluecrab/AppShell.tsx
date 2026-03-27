@@ -162,7 +162,7 @@ export function AppShell({
             <section className="rounded-[28px] border border-cyan-400/10 bg-[linear-gradient(180deg,rgba(34,211,238,0.1),rgba(255,255,255,0.04))] p-5 backdrop-blur">
               <div className="mb-3 text-sm font-semibold text-white">Featured communities</div>
               <div className="space-y-3">
-                {shell.featuredCommunities.map((community) => (
+                {shell.featuredCommunities.map((community: any) => (
                   <Link key={community.id} href={`/c/${community.slug}`} className="block rounded-2xl border border-cyan-400/15 bg-black/20 p-3 transition hover:border-cyan-400/30">
                     <div className="flex items-center justify-between gap-3">
                       <div>
@@ -180,7 +180,7 @@ export function AppShell({
           <section className="rounded-[28px] border border-white/10 bg-white/5 p-5 backdrop-blur">
             <div className="mb-3 text-sm font-semibold text-white">Trending communities</div>
             <div className="space-y-3">
-              {shell.trendingCommunities.map((community) => (
+              {shell.trendingCommunities.map((community: any) => (
                 <Link key={community.id} href={`/c/${community.slug}`} className="block rounded-2xl border border-white/6 bg-black/20 p-3 transition hover:border-cyan-400/30">
                   <div className="flex items-center justify-between gap-3">
                     <div>
@@ -197,7 +197,7 @@ export function AppShell({
           <section className="rounded-[28px] border border-white/10 bg-white/5 p-5 backdrop-blur">
             <div className="mb-3 text-sm font-semibold text-white">Top posts</div>
             <div className="space-y-3">
-              {shell.trendingPosts.map((post, index) => (
+              {shell.trendingPosts.map((post: any, index: number) => (
                 <Link key={post.id} href={`/post/${post.id}`} className="block rounded-2xl border border-white/6 bg-black/20 p-3 transition hover:border-cyan-400/30">
                   <div className="mb-2 flex items-center justify-between text-xs text-slate-500">
                     <span>#{index + 1}</span>
@@ -220,7 +220,7 @@ export function AppShell({
                   You already joined the current recommendations.
                 </div>
               ) : null}
-              {shell.recommendedCommunities.map((community) => (
+              {shell.recommendedCommunities.map((community: any) => (
                 <Link key={community.id} href={`/c/${community.slug}`} className="block rounded-2xl border border-white/6 bg-black/20 p-3 transition hover:border-cyan-400/30">
                   <div className="text-sm font-medium text-white">{community.name}</div>
                   <div className="mt-1 text-xs text-slate-400">{community.memberCount} members</div>

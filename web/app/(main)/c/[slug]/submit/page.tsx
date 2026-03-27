@@ -1,7 +1,6 @@
 import { notFound, redirect } from "next/navigation"
 import { CreatePostForm } from "@/components/bluecrab/CreatePostForm"
 import { getCommunityBySlug } from "@/lib/bluecrab-data"
-import { hasDatabaseUrl, prisma } from "@/lib/prisma"
 import { getSessionUser } from "@/lib/session"
 
 export default async function SubmitPostPage({
@@ -24,13 +23,7 @@ export default async function SubmitPostPage({
     redirect(`/c/${slug}`)
   }
 
-  const projects = hasDatabaseUrl
-    ? await prisma.project.findMany({
-        where: { userId: user.id },
-        orderBy: [{ updatedAt: "desc" }],
-        select: { id: true, name: true },
-      })
-    : []
+  const projects: Array<{ id: string; name: string }> = []
 
   return (
     <div className="mx-auto max-w-3xl space-y-5">

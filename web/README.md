@@ -23,7 +23,7 @@ A modern Next.js 16 frontend for BlueCrab social platform with Tailwind CSS and 
    
    **Edit `.env.local`:**
    ```env
-   NEXT_PUBLIC_API_BASE_URL=http://localhost:8080/api
+   NEXT_PUBLIC_API_URL=https://your-backend-url.up.railway.app
    ```
 
 3. **Start development server:**
@@ -33,10 +33,7 @@ A modern Next.js 16 frontend for BlueCrab social platform with Tailwind CSS and 
    
    Open [http://localhost:3000](http://localhost:3000)
 
-4. **Start the backend API (in another terminal):**
-   ```bash
-   cd .. && go run cmd/api/main.go
-   ```
+4. Point `NEXT_PUBLIC_API_URL` at your Railway backend.
 
 ## Troubleshooting
 
@@ -47,12 +44,12 @@ A modern Next.js 16 frontend for BlueCrab social platform with Tailwind CSS and 
 **Solution:**
 1. Check if backend API is running:
    ```bash
-   curl http://localhost:8080/api/auth/me
+   curl https://your-backend-url.up.railway.app/auth/me
    ```
 
 2. Verify `.env.local` has correct API URL:
    ```
-   NEXT_PUBLIC_API_BASE_URL=http://localhost:8080/api
+   NEXT_PUBLIC_API_URL=https://your-backend-url.up.railway.app
    ```
 
 3. Check browser console (F12) for detailed error messages
@@ -63,8 +60,8 @@ A modern Next.js 16 frontend for BlueCrab social platform with Tailwind CSS and 
 
 ### API Connection Issues
 
-- If backend is on a different port, update `NEXT_PUBLIC_API_BASE_URL`
-- If using Docker, use container service names: `http://api:8080/api`
+- If backend is on a different domain, update `NEXT_PUBLIC_API_URL`
+- If using local backend, use `http://localhost:4000`
 - For production, use your deployed backend domain
 
 ## Deployment
@@ -76,7 +73,7 @@ A modern Next.js 16 frontend for BlueCrab social platform with Tailwind CSS and 
 3. Set **Root Directory** to `web`
 4. Add environment variable:
    ```env
-   NEXT_PUBLIC_API_BASE_URL=https://<YOUR-BACKEND-API-DOMAIN>/api
+   NEXT_PUBLIC_API_URL=https://<YOUR-BACKEND-API-DOMAIN>
    ```
 5. Deploy
 
@@ -89,7 +86,7 @@ A modern Next.js 16 frontend for BlueCrab social platform with Tailwind CSS and 
 
 2. Run container:
    ```bash
-   docker run -p 3000:3000 -e NEXT_PUBLIC_API_BASE_URL=http://api:8080/api bluecrab-web
+   docker run -p 3000:3000 -e NEXT_PUBLIC_API_URL=http://api:8080 bluecrab-web
    ```
 
 ### Docker Compose
@@ -135,8 +132,7 @@ web/
 
 ## Notes
 
-- Frontend communicates with backend API at `NEXT_PUBLIC_API_BASE_URL`
-- All API requests include JWT tokens from browser storage
+- Frontend communicates with backend API at `NEXT_PUBLIC_API_URL`
+- All auth, users, and posts traffic goes to the Railway backend
 - Images can be loaded from any remote URL
 - Mobile UI is fully responsive with hamburger menu
-

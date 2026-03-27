@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { FormMessage } from "@/components/bluecrab/FormMessage"
+import { auth } from "@/lib/api"
 
 export function AuthForm({
   title,
@@ -39,32 +40,21 @@ export function AuthForm({
           }
 
     try {
-      const res = await fetch(`/api/auth/${mode}`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      })
-
-      const data = await res.json().catch(() => ({}))
-      if (!res.ok) {
-        setError(data.error || "Authentication failed.")
-        return
-      }
-
       if (mode === "login") {
+        await auth.login(payload.email, payload.password)
         router.push("/")
         router.refresh()
         return
       }
 
+      await auth.register(payload.username ?? "", payload.email, payload.password)
+
       setSuccess("Account created. You can sign in now.")
       router.push("/login?registered=1")
       router.refresh()
-    } catch {
-      setError("Something went wrong. Please try again.")
+    } catch (error) {
+      console.error(error instanceof Error ? error.message : error)
+      setError(error instanceof Error ? error.message : "Something went wrong. Please try again.")
     } finally {
       setLoading(false)
     }

@@ -9,17 +9,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "postinstall": "prisma generate",
-    "prisma:generate": "prisma generate",
-    "prisma:push": "prisma db push",
-    "prisma:seed": "prisma db seed"
+    "start": "next start"
   },
   "dependencies": {
-    "@prisma/client": "^6.7.0",
-    "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",
-    "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.511.0",
     "next": "16.1.6",
     "next-themes": "^0.4.6",
@@ -29,16 +22,11 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "prisma": "^6.7.0",
     "tailwindcss": "^4",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
   }
 }

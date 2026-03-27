@@ -33,7 +33,7 @@ export default async function ProjectPage({
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
         <section className="space-y-4">
           <div className="font-heading text-2xl font-semibold text-white">Project timeline</div>
-          {project.updates.map((update) => (
+          {project.updates.map((update: any) => (
             <div key={update.id} className="rounded-[30px] border border-white/10 bg-white/5 p-5">
               <div className="text-sm font-medium text-white">{update.title}</div>
               <div className="mt-2 text-sm leading-7 text-slate-300">{update.content}</div>
@@ -44,7 +44,7 @@ export default async function ProjectPage({
 
         <aside className="space-y-4">
           <div className="font-heading text-2xl font-semibold text-white">Related posts</div>
-          {project.posts.map((post) => (
+          {project.posts.map((post: any) => (
             <PostCard key={post.id} post={post} viewerId={viewer?.id} compact />
           ))}
         </aside>
